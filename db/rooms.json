@@ -1,166 +1,248 @@
 [
   {
     "room": "Beech",
-    "price": "£105.00"
+    "assignee": "",
+    "paid": false,
+    "price": "105.00"
   },
   {
     "room": "The Bonita Suite",
-    "price": "£172.00"
+    "assignee": "",
+    "paid": false,
+    "price": "172.00"
   },
   {
     "room": "Newbolt",
-    "price": "£172.00"
+    "assignee": "",
+    "paid": false,
+    "price": "172.00"
   },
   {
     "room": "Oriel",
-    "price": "£172.00"
+    "assignee": "",
+    "paid": false,
+    "price": "172.00"
   },
   {
     "room": "Coronation",
-    "price": "£154.00"
+    "assignee": "",
+    "paid": false,
+    "price": "154.00"
   },
   {
     "room": "Lord Byron's",
-    "price": "£172.00"
+    "assignee": "",
+    "paid": false,
+    "price": "172.00"
   },
   {
     "room": "Little Rose",
-    "price": "£143.00"
+    "assignee": "",
+    "paid": false,
+    "price": "143.00"
   },
   {
     "room": "Guest room 1",
-    "price": "£138.00"
+    "assignee": "",
+    "paid": false,
+    "price": "138.00"
   },
   {
     "room": "Ily",
-    "price": "£172.00"
+    "assignee": "",
+    "paid": false,
+    "price": "172.00"
   },
   {
     "room": "Reid",
-    "price": "£143.00"
+    "assignee": "",
+    "paid": false,
+    "price": "143.00"
   },
   {
     "room": "Tower",
-    "price": "£172.00"
+    "assignee": "",
+    "paid": false,
+    "price": "172.00"
   },
   {
     "room": "Foxholes",
-    "price": "£143.00"
+    "assignee": "",
+    "paid": false,
+    "price": "143.00"
   },
   {
     "room": "Miss D's South",
-    "price": "£172.00"
+    "assignee": "",
+    "paid": false,
+    "price": "172.00"
   },
   {
     "room": "Guest room 2",
-    "price": "£132.00"
+    "assignee": "",
+    "paid": false,
+    "price": "132.00"
   },
   {
     "room": "Clanville",
-    "price": "£138.00"
+    "assignee": "",
+    "paid": false,
+    "price": "138.00"
   },
   {
     "room": "Topiary",
-    "price": "£66.00"
+    "assignee": "",
+    "paid": false,
+    "price": "66.00"
   },
   {
     "room": "Elmhay",
-    "price": "£143.00"
+    "assignee": "",
+    "paid": false,
+    "price": "143.00"
   },
   {
     "room": "Elsie's",
-    "price": "£160.00"
+    "assignee": "",
+    "paid": false,
+    "price": "160.00"
   },
   {
     "room": "Jessie's",
-    "price": "£154.00"
+    "assignee": "",
+    "paid": false,
+    "price": "154.00"
   },
   {
     "room": "Bootboy",
-    "price": "£77.00"
+    "assignee": "",
+    "paid": false,
+    "price": "77.00"
   },
   {
     "room": "Stable Lad",
-    "price": "£77.00"
+    "assignee": "",
+    "paid": false,
+    "price": "77.00"
   },
   {
     "room": "Footman",
-    "price": "£77.00"
+    "assignee": "",
+    "paid": false,
+    "price": "77.00"
   },
   {
     "room": "Coachman",
-    "price": "£77.00"
+    "assignee": "",
+    "paid": false,
+    "price": "77.00"
   },
   {
     "room": "Ladies East",
-    "price": "£127.00"
+    "assignee": "",
+    "paid": false,
+    "price": "127.00"
   },
   {
     "room": "Ladies West",
-    "price": "£127.00"
+    "assignee": "",
+    "paid": false,
+    "price": "127.00"
   },
   {
     "room": "Butler's",
-    "price": "£66.00"
+    "assignee": "",
+    "paid": false,
+    "price": "66.00"
   },
   {
     "room": "Head Butler's",
-    "price": "£138.00"
+    "assignee": "",
+    "paid": false,
+    "price": "138.00"
   },
   {
     "room": "Housekeeper's",
-    "price": "£143.00"
+    "assignee": "",
+    "paid": false,
+    "price": "143.00"
   },
   {
     "room": "Horseshoe",
-    "price": "£99.00"
+    "assignee": "",
+    "paid": false,
+    "price": "99.00"
   },
   {
     "room": "Rosie's 1",
-    "price": "£99.00"
+    "assignee": "",
+    "paid": false,
+    "price": "99.00"
   },
   {
     "room": "Rosie's 2",
-    "price": "£77.00"
+    "assignee": "",
+    "paid": false,
+    "price": "77.00"
   },
   {
     "room": "Bumbelino's 1",
-    "price": "£99.00"
+    "assignee": "",
+    "paid": false,
+    "price": "99.00"
   },
   {
     "room": "Bumbelino's 2",
-    "price": "£99.00"
+    "assignee": "",
+    "paid": false,
+    "price": "99.00"
   },
   {
     "room": "Bumbelino's 3",
-    "price": "£99.00"
+    "assignee": "",
+    "paid": false,
+    "price": "99.00"
   },
   {
     "room": "Master Ben's 1",
-    "price": "£99.00"
+    "assignee": "",
+    "paid": false,
+    "price": "99.00"
   },
   {
     "room": "Master Ben's 2",
-    "price": "£55.00"
+    "assignee": "",
+    "paid": false,
+    "price": "55.00"
   },
   {
     "room": "Master Ben's 3",
-    "price": "£55.00"
+    "assignee": "",
+    "paid": false,
+    "price": "55.00"
   },
   {
     "room": "Master Ben's 4",
-    "price": "£99.00"
+    "assignee": "",
+    "paid": false,
+    "price": "99.00"
   },
   {
     "room": "Master Ben's 5",
-    "price": "£99.00"
+    "assignee": "",
+    "paid": false,
+    "price": "99.00"
   },
   {
     "room": "Jumping Jack's 1",
-    "price": "£121.00"
+    "assignee": "",
+    "paid": false,
+    "price": "121.00"
   },
   {
     "room": "Jumping Jack's 2",
-    "price": "£99.00"
+    "assignee": "",
+    "paid": false,
+    "price": "99.00"
   }
 ]
