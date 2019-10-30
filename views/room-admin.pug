@@ -1,0 +1,22 @@
+html
+  head
+    title= title
+  body
+    p= room.paid
+    block content
+      .main.container
+        .row
+          .col-md-6.col-md-offset-3
+            h1.display-4.m-b-2= room.room
+            p= `price: ${room.price}`
+            // register form
+            form(method='POST' action=`/room/admin/${room._id}?key=${key}`)
+              div.form-group
+                label(for='assignee') Assignee:
+                input#assignee.form-control(type='email', placeholder='name@email.com' name='assignee' value=room.assignee)
+              div.form-group
+                label(for='paidCheckboxVal') Paid:
+                input#paidCheckboxVal.form-control(type='checkbox', name='paidCheckboxVal' checked=room.paid)
+              input#room.form-control(type='hidden' name='room' value=room.room)
+              input#price.form-control(type='hidden' name='price' value=room.price)
+              button.btn.btn-primary(type='submit') Update
