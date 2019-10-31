@@ -38,9 +38,6 @@ router.get('/admin/:id', basicApiKey, function (req, res, next) {
 /* POST admin room */
 router.post('/admin/:id', basicApiKey, function (req, res, next) {
   const key = req.query.key;
-  console.info('adssad')
-  console.info(req.body)
-  console.info('adssad')
   const updatedRoom = {
     room: req.body.room,
     assignee: req.body.assignee,

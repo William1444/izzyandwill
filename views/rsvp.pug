@@ -1,0 +1,31 @@
+html
+  head
+    title= title
+  body
+    block content
+      .main.container
+        .row
+          .col-md-6.col-md-offset-3
+            // register form
+            form#rsvp(method='POST' action=`/rsvp?key=${key}`)
+              div.form-group
+                label(for='email') Email Address:
+                input#email.form-control(type='email', placeholder='name@email.com' name='email')
+              div.form-group
+                label(for='firstName') First Name:
+                input#firstName.form-control(type='text', placeholder='first' name='firstName' required=true)
+              div.form-group
+                label(for='lastName') Last Name:
+                input#lastName.form-control(type='text', placeholder='last' name='lastName' required=true)
+              div.form-group
+                label(for='attending') Are you attending?:
+                input#attending.form-control(type='checkbox', name='attending' checked=false)
+              div.form-group
+                label(for='whoElse') Who else is coming with you?:
+                input#whoElse.form-control(type='text', placeholder='...' name='whoElse' required=true)
+              div.form-group
+                label(for='roomList') Room preference?:
+                select#roomList(name='roomList' form='rsvp')
+                  each room in rooms
+                    option(value=`${room._id}`)=room.room
+              button.btn.btn-primary(type='submit') Update
