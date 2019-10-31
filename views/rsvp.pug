@@ -10,7 +10,7 @@ html
             form#rsvp(method='POST' action=`/rsvp?key=${key}`)
               div.form-group
                 label(for='email') Email Address:
-                input#email.form-control(type='email', placeholder='name@email.com' name='email')
+                input#email.form-control(type='email', placeholder='name@email.com' name='email' required=true)
               div.form-group
                 label(for='firstName') First Name:
                 input#firstName.form-control(type='text', placeholder='first' name='firstName' required=true)
@@ -19,13 +19,13 @@ html
                 input#lastName.form-control(type='text', placeholder='last' name='lastName' required=true)
               div.form-group
                 label(for='attending') Are you attending?:
-                input#attending.form-control(type='checkbox', name='attending' checked=false)
+                input#attending.form-control(type='checkbox', name='attending' checked=true)
               div.form-group
-                label(for='whoElse') Who else is coming with you?:
-                input#whoElse.form-control(type='text', placeholder='...' name='whoElse' required=true)
+                label(for='otherGuests') Who else is coming with you?:
+                input#otherGuests.form-control(type='text', placeholder='...' name='otherGuests' required=true)
               div.form-group
-                label(for='roomList') Room preference?:
-                select#roomList(name='roomList' form='rsvp')
+                label(for='room') Room preference?:
+                select#room(name='roomList' form='rsvp')
                   each room in rooms
                     option(value=`${room._id}`)=room.room
               button.btn.btn-primary(type='submit') Update
