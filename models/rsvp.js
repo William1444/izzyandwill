@@ -8,3 +8,4 @@ module.exports = mongoose.model('Rsvp', new mongoose.Schema({
   roomId: Number,
   message: String
 }));
+

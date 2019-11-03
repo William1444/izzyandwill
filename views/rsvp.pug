@@ -8,7 +8,7 @@ block content
       p
         .error This email has already sent an RSVP.
         | If you've already submitted  the RSVP but would like to let us know of any changes such as: you are now no longer able to make it, or you would like to book a room then please email
-        a(href="mailto:orchardleigh.willandizzy@gmail.com")=' orchardleigh.willandizzy@gmail.com'
+        a(href=`mailto:${global.email}`)=` ${global.email}`
         | .
         <br> Otherwise please use a different email address.
     else if success
@@ -47,7 +47,7 @@ block content
             .sqs-block-content
               .form-wrapper
                 .form-inner-wrapper
-                  form(autocomplete='on' method='POST' action=`/rsvp?key=${key}`)
+                  form#rsvp(autocomplete='on' method='POST' action=`/rsvp?key=${key}` name="rsvp")
                     .field-list.clear
                       #email.form-item.field.email.required
                         label.title(for='email-field')
@@ -82,15 +82,16 @@ block content
                           | Who else is coming with you?
                           span.required *
                         input#other-guests-field.field-element.text(type='text' name='otherGuests' required=true value=otherGuests)
-                      #message.form-item.field.textarea
+                      #message-wrapper.form-item.field.textarea
                         label.title(for='message-field') Message
-                        textarea#message-field.field-element(maxlength=1000)=message
+                        textarea#message.field-element(maxlength=1000 name='message' form='rsvp' method="post")=message
                       #room.form-item.field.select.required
                         label.title(for='room-field')
                           | Choose Room
                           span.required *
                         .description List of rooms can be found here. Select NA if you do not wish to stay at the wedding venue
-                        select#room-field.select-css(name='roomId')
+                        select#room-field.select-css(name='roomId' required=true)
+                          option(value="" disabled=true selected=true style="display: none") Select room
                           each room in rooms
                             option(value=`${room._id}`)=room.room
                     .form-button-wrapper.form-button-wrapper--align-center

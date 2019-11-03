@@ -1,5 +1,7 @@
+const {fromEmail} = require('./../config');
 module.exports = function (req, res, next) {
   res.locals = ({
+    email: fromEmail,
     global: {
       views: [
         {

@@ -11,7 +11,7 @@ const ERROR_ROOM_ALREADY_ASSIGNED = 'ROOM_ALREADY_ASSIGNED';
 const VALID_RSVP_QUERY_PARAMS = ['roomId', 'firstName', 'lastName', 'attending', 'otherGuests', 'errorEmailExists', 'message', 'success', 'hasSelectedRoom'];
 
 function isRoomAssigned(room) {
-  return room.paid && !(room.assignee && room.assignee.length > 1);
+  return room.paid || (room.assignee && room.assignee.length > 1);
 }
 
 function getValidQueryParamsForModel(req) {
@@ -33,43 +33,70 @@ function getValidQueryParamsForModel(req) {
 /* GET rsvp */
 router.get('/', function (req, res, next) {
   Room.find({})
-    .then(rooms => res.render('rsvp', Object.assign({
-      rooms: rooms
-        .filter(r => isRoomAssigned(r))
-        .sort((a, b) => a.room > b.room ? 1 : -1)
-        .concat([{room: 'NA', _id: NA_ROOM_ID}]),
-      key: req.query.key
-    }, getValidQueryParamsForModel(req))))
+    .then(rooms => {
+      let unassignedRooms = rooms
+        .filter(r => !isRoomAssigned(r))
+        .sort((a, b) => a.room > b.room ? 1 : -1);
+      res.render('rsvp', Object.assign({
+        rooms: [{room: 'NA', _id: NA_ROOM_ID}].concat(unassignedRooms),
+        key: req.query.key
+      }, getValidQueryParamsForModel(req)))
+    })
     .catch(err => next(err))
 });
 
 router.get('/rsvps', basicApiKey, function (req, res, next) {
   Rsvp.find({})
+    .then(rsvps => Promise.all(rsvps
+      .map(rsvp => Room.findOne({_id: rsvp.roomId})
+        .then(room =>
+          Object.assign(rsvp, {room: room && room.room || 'NA'})
+        )
+      )))
     .then(rsvps => res.render('rsvps', {rsvps}))
-    .catch(e => next(e))
+    .catch(e => next(e));
 });
 
 function assignRoom(id, email) {
-  return id === NA_ROOM_ID ? Promise.resolve(id) :
-    Room.find({_id: id})
-      .then(room => {
+  let room;
+  return id === NA_ROOM_ID ? Promise.resolve({_id: id}) :
+    Room.findOne({_id: id})
+      .then(r => {
+        room = r;
         if (isRoomAssigned(room)) {
           return Promise.reject(new Error(ERROR_ROOM_ALREADY_ASSIGNED))
         } else {
           return Room.updateOne({_id: room.id}, Object.assign(room, {assignee: email, paid: false}))
         }
       })
+      .then(() => room)
 }
 
 router.post('/', function (req, res, next) {
+  console.info(req.body);
   const body = req.body;
-  const roomId = body.roomId;
+  const roomId = Number(body.roomId);
   const email = body.email;
-  let firstName = body.firstName;
-  let lastName = body.lastName;
-  let attending = body.attending;
-  let otherGuests = body.otherGuests;
-  assignRoom(roomId, email)
+  const firstName = body.firstName;
+  const lastName = body.lastName;
+  const attending = body.attending === 'Yes';
+  console.info(attending, body.attending);
+  const otherGuests = body.otherGuests;
+  const message = body.message;
+  let room;
+  let hasSelectedRoom = roomId !== NA_ROOM_ID;
+  Rsvp.findOne({email})
+    .then(rsvp => {
+      if (rsvp) {
+        res.redirect(url.format({
+          pathname: '/rsvp',
+          query: {roomId, firstName, lastName, attending, otherGuests, errorEmailExists: true, message}
+        }));
+        throw new Error('email exists');
+      }
+    })
+    .then(() => assignRoom(roomId, email))
+    .then(r => room = r)
     .catch(e => {
       if (e.message === ERROR_ROOM_ALREADY_ASSIGNED) {
         res.render('rsvp', {room, error: {roomTaken: true}})
@@ -80,24 +107,17 @@ router.post('/', function (req, res, next) {
       email,
       firstName: firstName,
       lastName: lastName,
-      attending: attending === 'on',
+      attending,
       otherGuests: otherGuests,
+      message,
       roomId
     }))
-    .then(r => res.redirect(url.format({
+    .then(() => rsvpReply.email(
+      {to: email, firstName, lastName, otherGuests, room, attending}))
+    .then(() => res.redirect(url.format({
       pathname: '/rsvp',
-      query: {success: true, hasSelectedRoom: roomId === NA_ROOM_ID, attending}
+      query: {success: true, hasSelectedRoom, attending}
     })))
-    .catch(e => {
-      if (e.code === 11000) {
-        res.redirect(url.format({
-          pathname: '/rsvp',
-          query: {roomId, firstName, lastName, attending, otherGuests, errorEmailExists: true}
-        }))
-      } else {
-        throw e
-      }
-    })
 });
 
 router.get('/test', basicApiKey, function (req, res, next) {
@@ -112,7 +132,13 @@ router.get('/test', basicApiKey, function (req, res, next) {
 });
 
 router.get('/test/html', basicApiKey, function (req, res, next) {
-  res.send(rsvpReply.html({firstName: 'Izzy', otherGuests: 'Pup', room: {room: 'Cheeky Bonita', price: '100.00'}}));
+  res.send(rsvpReply.html({
+    firstName: 'Izzy',
+    lastName: 'Miller',
+    otherGuests: 'Pup',
+    room: {room: 'NA', price: '100.00'},
+    message: 'Something reasonably long and \n maybe '
+  }));
 });
 
 module.exports = router;

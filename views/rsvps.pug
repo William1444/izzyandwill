@@ -10,6 +10,7 @@ html
         th Attending
         th Other Guests
         th Room
+        th Message
       each rsvp in rsvps
         tr
           td #{rsvp.email}
@@ -18,3 +19,4 @@ html
           td #{rsvp.attending}
           td #{rsvp.otherGuests}
           td #{rsvp.room}
+          td #{rsvp.message}
