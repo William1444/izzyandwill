@@ -7,12 +7,14 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 const roomsRouter = require('./routes/room');
 const rsvpRouter = require('./routes/rsvp');
+const locals = require('./middleware/locals')
 
 const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+app.use(locals);
 
 app.use(logger('dev'));
 app.use(express.json());
