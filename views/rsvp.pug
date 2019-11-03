@@ -1,7 +1,16 @@
 extends layout
 block content
   #page-5db88a057cb794565dabad7e.sqs-layout.sqs-grid-12.columns-12(data-type='page' data-updated-on='1572780341749')
-    include image
+    if errorEmailExists
+      h2 UH OH!
+      p
+        .error This email has already sent an RSVP.
+        | If you've already submitted  the RSVP but would like to let us know of any changes such as: you are now no longer able to make it, or you would like to book a room then please email
+        a(href="mailto:orchardleigh.willandizzy@gmail.com")=' orchardleigh.willandizzy@gmail.com'
+        | .
+        <br> Otherwise please use a different email address.
+    else
+      include image
     .row.sqs-row
       .col.sqs-col-2.span-2
         #block-59856a05928f013bbe9b.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
@@ -10,6 +19,7 @@ block content
         #block-cc7de632778bce2a9d10.sqs-block.html-block.sqs-block-html(data-block-type='2')
           .sqs-block-content
             h2(style='text-align:center;white-space:pre-wrap;') Please RSVP by February 1, 2020
+
         #block-76326305fe9b1e764ab3.sqs-block.form-block.sqs-block-form(data-block-type='9')
           .sqs-block-content
             .form-wrapper
