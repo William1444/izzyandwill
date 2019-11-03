@@ -45,10 +45,7 @@ router.post('/admin/:id', basicApiKey, function (req, res, next) {
   };
   console.info(updatedRoom);
   Room.updateOne({_id: req.params.id}, updatedRoom)
-    .then(() => {
-      console.info(updatedRoom);
-      return res.redirect(`/room/admin?key=${key}`)
-    })
+    .then(() => res.redirect(`/room/admin?key=${key}`))
     .catch(err => next(err))
 });
 

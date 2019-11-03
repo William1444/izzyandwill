@@ -5,6 +5,6 @@ module.exports = mongoose.model('Rsvp', new mongoose.Schema({
   lastName: {type: String, required: true},
   attending: {type: Boolean, required: false},
   otherGuests: {type: String, required: true},
-  room: String
+  roomId: Number,
+  message: String
 }));
-
