@@ -11,76 +11,97 @@ block content
         a(href="mailto:orchardleigh.willandizzy@gmail.com")=' orchardleigh.willandizzy@gmail.com'
         | .
         <br> Otherwise please use a different email address.
+    else if success
+      h2 Thank you for your RSVP!
+      if hasSelectedRoom
+        p You will soon receive an email to confirm. We are delighted that you wish to stay with us at the venue. The email contains instructions on how to pay for and secure the room.
+        | If you do not receive anything within 24 hours, or have any other query then please email
+        a(href="mailto:orchardleigh.willandizzy@gmail.com")=' orchardleigh.willandizzy@gmail.com'
+        | .
+      else if attending
+        p You will soon receive an email to confirm.
+          br
+          | You have said that you
+          |
+          b do not
+          |
+          | require a room at the venue. If you do not receive anything within 24 hours, or have any other query then please email
+          a(href="mailto:orchardleigh.willandizzy@gmail.com")=' orchardleigh.willandizzy@gmail.com'
+          | .
+      else
+        p We are really sorry to here that you are not able to join us, but understand that not everyone will be able to attend our day.
+
+
     else
       include image
-    .row.sqs-row
-      .col.sqs-col-2.span-2
-        #block-59856a05928f013bbe9b.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
-          .sqs-block-content &nbsp;
-      .col.sqs-col-8.span-8
-        #block-cc7de632778bce2a9d10.sqs-block.html-block.sqs-block-html(data-block-type='2')
-          .sqs-block-content
-            h2(style='text-align:center;white-space:pre-wrap;') Please RSVP by February 1, 2020
+      .row.sqs-row
+        .col.sqs-col-2.span-2
+          #block-59856a05928f013bbe9b.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
+            .sqs-block-content &nbsp;
+        .col.sqs-col-8.span-8
+          #block-cc7de632778bce2a9d10.sqs-block.html-block.sqs-block-html(data-block-type='2')
+            .sqs-block-content
+              h2(style='text-align:center;white-space:pre-wrap;') Please RSVP by February 1, 2020
 
-        #block-76326305fe9b1e764ab3.sqs-block.form-block.sqs-block-form(data-block-type='9')
-          .sqs-block-content
-            .form-wrapper
-              .form-inner-wrapper
-                form(autocomplete='on' method='POST' action=`/rsvp?key=${key}`)
-                  .field-list.clear
-                    #email.form-item.field.email.required
-                      label.title(for='email-field')
-                        | Email Address
-                        span.required *
-                      input#email-field.field-element.form-control(name='email' type='email' autocomplete='email' required=true spellcheck='false' onblur="requiredInput(this, 'email')")
-                      span.error-message-email Invalid email address
-                    fieldset#name.form-item.fields.name.required
-                      .title
-                        | Name
-                        span.required *
-                      legend Name
-                      #first-name.field.first-name.form-item
-                        label.caption
-                          input#firstName-field.field-element.field-control(name='firstName' x-autocompletetype='given-name' type='text' spellcheck='false' maxlength='30' data-title='First' value=firstName required=true onblur="requiredInput(this, 'first-name'); checkTouchedFieldsErrors(['lastName-field', 'firstName-field'], 'name')")
-                          |                   First Name
-                      #last-name.field.last-name.form-item
-                        label.caption
-                          input#lastName-field.field-element.field-control(name='lastName' x-autocompletetype='surname' type='text' spellcheck='false' maxlength='30' data-title='Last' value=lastName required=true onblur="requiredInput(this, 'last-name'); checkTouchedFieldsErrors(['lastName-field', 'firstName-field'], 'name')")
-                          |                   Last Name
-                    #attending.form-item.field.radio.required
-                      div.title(for='attending-field')
-                        | Are you attending?
-                        span.required *
-                      input#attending-yes.form-radio(type='radio' name='attending' value='Yes' checked=attending === 'Yes')
-                      label(for='attending-yes') Yes
-                      <br>
-                      input#attending-no.form-radio(type='radio' name='attending' value='No' checked=attending === 'No')
-                      label(for='attending-no') No
-                    #other-guests.form-item.field.text.required
-                      label.title(for='other-guests-field')
-                        | Who else is coming with you?
-                        span.required *
-                      input#other-guests-field.field-element.text(type='text' name='otherGuests' required=true value=otherGuests)
-                    #message.form-item.field.textarea
-                      label.title(for='message-field') Message
-                      textarea#message-field.field-element(maxlength=1000)=message
-                    #room.form-item.field.select.required
-                      label.title(for='room-field')
-                        | Choose Room
-                        span.required *
-                      .description List of rooms can be found here. Select NA if you do not wish to stay at the wedding venue
-                      select#room-field.select-css(name='roomId')
-                        each room in rooms
-                          option(value=`${room._id}`)=room.room
-                  .form-button-wrapper.form-button-wrapper--align-center
-                    input.button.sqs-system-button.sqs-editable-button(type='submit' value='RSVP')
-                  .hidden.form-submission-text Thank you!
-                  .hidden.form-submission-html(data-submission-html='')
-        #block-35c8d0e310cddd9e6eb3.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
-          .sqs-block-content &nbsp;
-      .col.sqs-col-2.span-2
-        #block-7f54ce32d89201b6edd1.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
-          .sqs-block-content &nbsp;
+          #block-76326305fe9b1e764ab3.sqs-block.form-block.sqs-block-form(data-block-type='9')
+            .sqs-block-content
+              .form-wrapper
+                .form-inner-wrapper
+                  form(autocomplete='on' method='POST' action=`/rsvp?key=${key}`)
+                    .field-list.clear
+                      #email.form-item.field.email.required
+                        label.title(for='email-field')
+                          | Email Address
+                          span.required *
+                        input#email-field.field-element.form-control(name='email' type='email' autocomplete='email' required=true spellcheck='false' onblur="requiredInput(this, 'email')")
+                        span.error-message-email Invalid email address
+                      fieldset#name.form-item.fields.name.required
+                        .title
+                          | Name
+                          span.required *
+                        legend Name
+                        #first-name.field.first-name.form-item
+                          label.caption
+                            input#firstName-field.field-element.field-control(name='firstName' x-autocompletetype='given-name' type='text' spellcheck='false' maxlength='30' data-title='First' value=firstName required=true onblur="requiredInput(this, 'first-name'); checkTouchedFieldsErrors(['lastName-field', 'firstName-field'], 'name')")
+                            |                   First Name
+                        #last-name.field.last-name.form-item
+                          label.caption
+                            input#lastName-field.field-element.field-control(name='lastName' x-autocompletetype='surname' type='text' spellcheck='false' maxlength='30' data-title='Last' value=lastName required=true onblur="requiredInput(this, 'last-name'); checkTouchedFieldsErrors(['lastName-field', 'firstName-field'], 'name')")
+                            |                   Last Name
+                      #attending.form-item.field.radio.required
+                        div.title(for='attending-field')
+                          | Are you attending?
+                          span.required *
+                        input#attending-yes.form-radio(type='radio' name='attending' value='Yes' checked=attending === 'Yes')
+                        label(for='attending-yes') Yes
+                        <br>
+                        input#attending-no.form-radio(type='radio' name='attending' value='No' checked=attending === 'No')
+                        label(for='attending-no') No
+                      #other-guests.form-item.field.text.required
+                        label.title(for='other-guests-field')
+                          | Who else is coming with you?
+                          span.required *
+                        input#other-guests-field.field-element.text(type='text' name='otherGuests' required=true value=otherGuests)
+                      #message.form-item.field.textarea
+                        label.title(for='message-field') Message
+                        textarea#message-field.field-element(maxlength=1000)=message
+                      #room.form-item.field.select.required
+                        label.title(for='room-field')
+                          | Choose Room
+                          span.required *
+                        .description List of rooms can be found here. Select NA if you do not wish to stay at the wedding venue
+                        select#room-field.select-css(name='roomId')
+                          each room in rooms
+                            option(value=`${room._id}`)=room.room
+                    .form-button-wrapper.form-button-wrapper--align-center
+                      input.button.sqs-system-button.sqs-editable-button(type='submit' value='RSVP')
+                    .hidden.form-submission-text Thank you!
+                    .hidden.form-submission-html(data-submission-html='')
+          #block-35c8d0e310cddd9e6eb3.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
+            .sqs-block-content &nbsp;
+        .col.sqs-col-2.span-2
+          #block-7f54ce32d89201b6edd1.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
+            .sqs-block-content &nbsp;
 
 
 

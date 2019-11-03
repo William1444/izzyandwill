@@ -8,7 +8,7 @@ const rsvpReply = require('./../services/rsvp-reply');
 const basicApiKey = require('./../middleware/basic-api-key');
 const NA_ROOM_ID = -1;
 const ERROR_ROOM_ALREADY_ASSIGNED = 'ROOM_ALREADY_ASSIGNED';
-const VALID_RSVP_QUERY_PARAMS = ['roomId', 'firstName', 'lastName', 'attending', 'otherGuests', 'errorEmailExists', 'message'];
+const VALID_RSVP_QUERY_PARAMS = ['roomId', 'firstName', 'lastName', 'attending', 'otherGuests', 'errorEmailExists', 'message', 'success', 'hasSelectedRoom'];
 
 function isRoomAssigned(room) {
   return room.paid && !(room.assignee && room.assignee.length > 1);
@@ -19,7 +19,13 @@ function getValidQueryParamsForModel(req) {
   return Object.keys(query)
     .filter(key => VALID_RSVP_QUERY_PARAMS.includes(key))
     .reduce((obj, key) => {
-      obj[key] = query[key];
+      if (query[key] === 'false') {
+        obj[key] = false
+      } else if (query[key] === 'true') {
+        obj[key] = true
+      } else {
+        obj[key] = query[key];
+      }
       return obj;
     }, {});
 }
@@ -78,7 +84,10 @@ router.post('/', function (req, res, next) {
       otherGuests: otherGuests,
       roomId
     }))
-    .then(r => res.redirect('/rsvp?success=true'))
+    .then(r => res.redirect(url.format({
+      pathname: '/rsvp',
+      query: {success: true, hasSelectedRoom: roomId === NA_ROOM_ID, attending}
+    })))
     .catch(e => {
       if (e.code === 11000) {
         res.redirect(url.format({
