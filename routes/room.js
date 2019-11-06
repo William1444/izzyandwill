@@ -2,23 +2,24 @@ var express = require('express');
 var router = express.Router();
 const Room = require('./../models/room');
 const basicApiKey = require('./../middleware/basic-api-key');
+const {ensureAuthenticated} = require('./../config/auth');
 
 /* GET rooms */
-router.get('/', function (req, res, next) {
+router.get('/', ensureAuthenticated, function (req, res, next) {
   Room.find({})
     .then(rooms => res.send(rooms))
     .catch(err => next(err))
 });
 
 /* GET rooms admin */
-router.get('/admin', basicApiKey, function (req, res, next) {
+router.get('/admin', ensureAuthenticated, basicApiKey, function (req, res, next) {
   Room.find({})
     .then(rooms => res.render('rooms', {rooms, key: req.query.key}))
     .catch(err => next(err))
 });
 
 /* GET admin room */
-router.get('/admin/:id', basicApiKey, function (req, res, next) {
+router.get('/admin/:id', ensureAuthenticated, basicApiKey, function (req, res, next) {
   Room.findById({_id: req.params.id})
     .then(room => {
       if (!room) {
@@ -36,7 +37,7 @@ router.get('/admin/:id', basicApiKey, function (req, res, next) {
 });
 
 /* POST admin room */
-router.post('/admin/:id', basicApiKey, function (req, res, next) {
+router.post('/admin/:id', ensureAuthenticated, basicApiKey, function (req, res, next) {
   const key = req.query.key;
   const updatedRoom = {
     room: req.body.room,

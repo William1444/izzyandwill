@@ -19118,3 +19118,20 @@ input:invalid {
 .error-email .error-message-email, .error-email.error-message-email {
     display: block
 }
+
+.login {
+
+}
+
+.form-wrapper.login {
+    align: center
+}
+
+.form-wrapper .login .form-item {
+    float: none;
+}
+
+.form-wrapper.login .field-list .fields .field {
+    float: none;
+    margin: 0 auto;
+}

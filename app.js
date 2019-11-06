@@ -3,11 +3,15 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const passport = require('passport');
+const flash = require('connect-flash');
+const session = require('express-session');
 
 const indexRouter = require('./routes/index');
 const roomsRouter = require('./routes/room');
 const rsvpRouter = require('./routes/rsvp');
-const locals = require('./middleware/locals')
+const loginRouter = require('./routes/login')
+const locals = require('./middleware/locals');
 
 const app = express();
 
@@ -22,7 +26,36 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Passport Config
+require('./config/passport')(passport);
+
+// Express session
+app.use(
+  session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+  })
+);
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Connect flash
+app.use(flash());
+
+// Global variables
+app.use(function(req, res, next) {
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg');
+  res.locals.error = req.flash('error');
+  next();
+});
+
+// Routes
 app.use('/', indexRouter);
+app.use('/login', loginRouter);
 app.use('/room', roomsRouter);
 app.use('/rsvp', rsvpRouter);
 

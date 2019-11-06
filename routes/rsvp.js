@@ -6,6 +6,7 @@ const Rsvp = require('./../models/rsvp');
 const Room = require('./../models/room');
 const rsvpReply = require('./../services/rsvp-reply');
 const basicApiKey = require('./../middleware/basic-api-key');
+const {ensureAuthenticated} = require('./../config/auth');
 const NA_ROOM_ID = -1;
 const ERROR_ROOM_ALREADY_ASSIGNED = 'ROOM_ALREADY_ASSIGNED';
 const VALID_RSVP_QUERY_PARAMS = ['roomId', 'firstName', 'lastName', 'attending', 'otherGuests', 'errorEmailExists', 'message', 'success', 'hasSelectedRoom'];
@@ -31,7 +32,7 @@ function getValidQueryParamsForModel(req) {
 }
 
 /* GET rsvp */
-router.get('/', function (req, res, next) {
+router.get('/', ensureAuthenticated, function (req, res, next) {
   Room.find({})
     .then(rooms => {
       let unassignedRooms = rooms
@@ -45,7 +46,7 @@ router.get('/', function (req, res, next) {
     .catch(err => next(err))
 });
 
-router.get('/rsvps', basicApiKey, function (req, res, next) {
+router.get('/rsvps', ensureAuthenticated, basicApiKey, function (req, res, next) {
   Rsvp.find({})
     .then(rsvps => Promise.all(rsvps
       .map(rsvp => Room.findOne({_id: rsvp.roomId})
@@ -72,7 +73,7 @@ function assignRoom(id, email) {
       .then(() => room)
 }
 
-router.post('/', function (req, res, next) {
+router.post('/', ensureAuthenticated, function (req, res, next) {
   console.info(req.body);
   const body = req.body;
   const roomId = Number(body.roomId);
@@ -120,7 +121,7 @@ router.post('/', function (req, res, next) {
     })))
 });
 
-router.get('/test', basicApiKey, function (req, res, next) {
+router.get('/test', ensureAuthenticated, basicApiKey, function (req, res, next) {
   rsvpReply.email({
     to: 'williamlacy2@gmail.com',
     firstName: 'Izzy',
@@ -131,7 +132,7 @@ router.get('/test', basicApiKey, function (req, res, next) {
     .catch(e => next(e));
 });
 
-router.get('/test/html', basicApiKey, function (req, res, next) {
+router.get('/test/html', ensureAuthenticated, basicApiKey, function (req, res, next) {
   res.send(rsvpReply.html({
     firstName: 'Izzy',
     lastName: 'Miller',
