@@ -5,8 +5,7 @@ const router = express.Router();
 const Rsvp = require('./../models/rsvp');
 const Room = require('./../models/room');
 const rsvpReply = require('./../services/rsvp-reply');
-const basicApiKey = require('./../middleware/basic-api-key');
-const {ensureAuthenticated} = require('./../config/auth');
+const {ensureAuthenticated, ensureAdmin} = require('./../config/auth');
 const NA_ROOM_ID = -1;
 const ERROR_ROOM_ALREADY_ASSIGNED = 'ROOM_ALREADY_ASSIGNED';
 const VALID_RSVP_QUERY_PARAMS = ['roomId', 'firstName', 'lastName', 'attending', 'otherGuests', 'errorEmailExists', 'message', 'success', 'hasSelectedRoom'];
@@ -46,7 +45,7 @@ router.get('/', ensureAuthenticated, function (req, res, next) {
     .catch(err => next(err))
 });
 
-router.get('/rsvps', ensureAuthenticated, basicApiKey, function (req, res, next) {
+router.get('/rsvps', ensureAuthenticated, ensureAdmin, function (req, res, next) {
   Rsvp.find({})
     .then(rsvps => Promise.all(rsvps
       .map(rsvp => Room.findOne({_id: rsvp.roomId})
@@ -121,7 +120,7 @@ router.post('/', ensureAuthenticated, function (req, res, next) {
     })))
 });
 
-router.get('/test', ensureAuthenticated, basicApiKey, function (req, res, next) {
+router.get('/test', ensureAuthenticated, ensureAdmin, function (req, res, next) {
   rsvpReply.email({
     to: 'williamlacy2@gmail.com',
     firstName: 'Izzy',
@@ -132,7 +131,7 @@ router.get('/test', ensureAuthenticated, basicApiKey, function (req, res, next) 
     .catch(e => next(e));
 });
 
-router.get('/test/html', ensureAuthenticated, basicApiKey, function (req, res, next) {
+router.get('/test/html', ensureAuthenticated, ensureAdmin, function (req, res, next) {
   res.send(rsvpReply.html({
     firstName: 'Izzy',
     lastName: 'Miller',

@@ -1,20 +1,19 @@
 include _head
-form(method='post' action='/login')
+form(method='post' action='/user/login')
   h2(style='text-align:center;white-space:pre-wrap;') Enter password
 
   .form-wrapper.login
     .form-inner-wrapper
-      form(autocomplete='on' method='POST' action=`/rsvp?key=${key}`)
-        .field-list.clear.login
-          fieldset#password.form-item.fields.name.required
-            .title(align="center")
-              | Password
-              span.required *
-            legend Password
-            #password-field.field.password.form-item(align="center")
-              label.caption
-                input(type='text' name='name' value='name' hidden=true)
-                input#password-field-input.field-element.field-control(name='password' type='text' spellcheck='false' maxlength='30' data-title='First' required=true onblur="requiredInput(this, 'password')" align="center")
-                |                   Password can be found on invite
-              .form-button-wrapper.form-button-wrapper--align-center
-                input.button.sqs-system-button.sqs-editable-button(type='submit' value='Submit')
+      .field-list.clear.login
+        fieldset#password.form-item.fields.name.required
+          .title(align="center")
+            | Password
+            span.required *
+          legend Password
+          #password-field.field.password.form-item(align="center")
+            label.caption
+              input(type='text' name='name' value='name' hidden=true)
+              input#password-field-input.field-element.field-control(name='password' type='text' spellcheck='false' maxlength='30' data-title='First' required=true onblur="requiredInput(this, 'password')" align="center")
+              |                   Password can be found on invite
+            .form-button-wrapper.form-button-wrapper--align-center
+              input.button.sqs-system-button.sqs-editable-button(type='submit' value='Submit')

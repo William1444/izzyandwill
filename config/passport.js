@@ -1,5 +1,5 @@
 const LocalStrategy = require('passport-local').Strategy;
-const { userPassword } = require('./../config');
+const { userPassword, adminPassword } = require('./../config');
 
 module.exports = function (passport) {
   passport.use(
@@ -7,18 +7,20 @@ module.exports = function (passport) {
       if (!password) {
         return done(null, false, {message: 'No password supplied'});
       } else {
-        if (password === userPassword) {
-          return done(null, {name});
+        if (password === adminPassword) {
+          return done(null, {name: 'admin', admin: true});
+        } else if (password === userPassword) {
+          return done(null, {name: 'user'});
         }
       }
     })
   );
 
   passport.serializeUser(function (user, done) {
-    done(null, 1);
+    done(null, user.admin ? 2 : 1);
   });
 
   passport.deserializeUser(function (id, done) {
-    done(null, {name: 'name'})
+    done(null, id === 2 ? {name: 'admin', admin: true} : {name: 'user', admin: false})
   });
 };

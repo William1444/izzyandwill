@@ -10,7 +10,7 @@ const session = require('express-session');
 const indexRouter = require('./routes/index');
 const roomsRouter = require('./routes/room');
 const rsvpRouter = require('./routes/rsvp');
-const loginRouter = require('./routes/login')
+const userRouter = require('./routes/user');
 const locals = require('./middleware/locals');
 
 const app = express();
@@ -55,7 +55,7 @@ app.use(function(req, res, next) {
 
 // Routes
 app.use('/', indexRouter);
-app.use('/login', loginRouter);
+app.use('/user', userRouter);
 app.use('/room', roomsRouter);
 app.use('/rsvp', rsvpRouter);
 
