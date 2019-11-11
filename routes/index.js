@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { ensureAuthenticated } = require('./../config/auth');
+const path = require('path');
 
 /* GET home page. */
 router.get('/', ensureAuthenticated, function (req, res) {
