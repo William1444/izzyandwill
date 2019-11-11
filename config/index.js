@@ -1,9 +1,11 @@
-const defaultSecrets = require('./../client_secret.json');
+function loadDefaultSendGridKeyFromFile() {
+  return require('./../client_secret.json').sendgridApiKey;
+};
 
 module.exports = {
   mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017',
   databaseName: "izzyandwill",
-  sendgridApiKey: process.env.SENDGRID_API_KEY || defaultSecrets.sendgridApiKey,
+  sendgridApiKey: process.env.SENDGRID_API_KEY || loadDefaultSendGridKeyFromFile(),
   fromEmail: process.env.FROM_EMAIL || 'orchardleigh.willandizzy@gmail.com',
   siteUrl: 'https://izzyandwill.herokuapp.com',
   userPassword: process.env.USER_PASSWORD || 'password',
