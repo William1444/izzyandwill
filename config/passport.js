@@ -11,6 +11,8 @@ module.exports = function (passport) {
           return done(null, {name: 'admin', admin: true});
         } else if (password === userPassword) {
           return done(null, {name: 'user'});
+        } else {
+          return done(null, false, {message: 'Incorrect password. Password can be found on invite'})
         }
       }
     })
