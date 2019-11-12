@@ -27,14 +27,6 @@ body#collection-5db850cb1739ee1838c29966(class='show-products-category-navigatio
       #upper-logo
         h1.logo(data-content-field='site-title')
           a(href='/') Izzy &amp; Will
-      script.
-        if (parseInt(Y.one('body').getComputedStyle('width'), 10) <= 640) {
-          Y.use('squarespace-ui-base', function (Y) {
-            Y.one("#upper-logo .logo").plug(Y.Squarespace.TextShrink, {
-              parentEl: Y.one('#upper-logo')
-            });
-          });
-        }
       .site-info(data-content-field='business-information')
         .site-address Street Address
         .site-city-state City, State, Zip
@@ -51,12 +43,6 @@ body#collection-5db850cb1739ee1838c29966(class='show-products-category-navigatio
       #lower-logo
         h1.logo(data-content-field='site-title')
           a(href='/') Izzy &amp; Will
-      script.
-        Y.use('squarespace-ui-base', function (Y) {
-          Y.one("#lower-logo .logo").plug(Y.Squarespace.TextShrink, {
-            parentEl: Y.one('#lower-logo')
-          });
-        });
       #topNav
         nav.main-nav(data-content-field='navigation')
           ul
@@ -67,16 +53,5 @@ body#collection-5db850cb1739ee1838c29966(class='show-products-category-navigatio
     .page-divider.top-divider
     // // page image or divider
     section#page.clear(role='main' data-content-field='main-content' data-collection-id='5db850cb1739ee1838c29966' data-edit-main-image='Banner')
-      #page-5db88a057cb794565dabad7e.sqs-layout.sqs-grid-12.columns-12.sqs-frontend-overlay-editor-widget-host(data-type='page' style='')
-        block content
+      block content
       #yui_3_17_2_1_1572780189629_3781.sqs-layout-insert-point-container
-
-  div
-  script(type='text/javascript' data-sqs-type='imageloader-bootstrapper').
-    (function () {
-      if (window.ImageLoader) {
-        window.ImageLoader.bootstrap({}, document);
-      }
-    })();
-  script.
-    Squarespace.afterBodyLoad(Y);
