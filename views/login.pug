@@ -5,15 +5,18 @@ form(method='post' action='/user/login')
   .form-wrapper.login
     .form-inner-wrapper
       .field-list.clear.login
-        fieldset#password.form-item.fields.name.required
+        fieldset#password(class='form-item fields name required' + `${authError.length > 0 ? ' error' : ''}`)
           .title(align="center")
             | Password
             span.required *
           legend Password
           #password-field.field.password.form-item(align="center")
+            input(type='text' name='name' value='name' hidden=true)
+            input#password-field-input.field-element.field-control(name='password' type='text' spellcheck='false' maxlength='30' data-title='First' required=true onblur=`${authError.length < 1 ? 'requiredInput(this, \'password\')' : ''}` align="center" class=`${authError.length > 0 ? 'error' : ''}`)
             label.caption
-              input(type='text' name='name' value='name' hidden=true)
-              input#password-field-input.field-element.field-control(name='password' type='text' spellcheck='false' maxlength='30' data-title='First' required=true onblur="requiredInput(this, 'password')" align="center")
-              |                   Password can be found on invite
+              if authError.length > 0
+                | #{authError}
+              else
+                | Password can be found on invite
             .form-button-wrapper.form-button-wrapper--align-center
               input.button.sqs-system-button.sqs-editable-button(type='submit' value='Submit')
