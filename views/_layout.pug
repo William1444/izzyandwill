@@ -7,21 +7,10 @@ body#collection-5db850cb1739ee1838c29966(class='show-products-category-navigatio
       .wrapper
         nav.main-nav.mobileNav
           ul
-            li.page-collection.active-link
-              a(href='/') Home
-            li.page-collection
-              a(href='/wedding') Wedding
-            li.page-collection
-              a(href='/travel') Travel
-            li.page-collection
-              a(href='/sleeping') Sleeping
-            li.page-collection
-              a(href='/gifts') Gifts
-            li.page-collection
-              a(href='/rsvp') RSVP
-            li.page-collection
-              a(href='/photos') Photos
-    #mobileMenuLink
+            for viewDescriptor in global.views
+              li(class=`page-collection${viewDescriptor.name === view ? ' active-link' : ''}`)
+                a(href=viewDescriptor.href)=viewDescriptor.name
+    #mobileMenuLink(onclick="toggleMenu('mobileNav')")
       a Menu
     header#header.clear
       #upper-logo

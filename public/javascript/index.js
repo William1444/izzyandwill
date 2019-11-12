@@ -43,3 +43,7 @@ function requiredInput(input, forId) {
   }
   input.classList.add('touched');
 }
+
+function toggleMenu(id) {
+  document.getElementById(id).classList.toggle('menu-open')
+}
