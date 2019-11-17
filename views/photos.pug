@@ -1,0 +1,26 @@
+extends _layout
+include mixins/_photo
+block variables
+  - var view = 'Photos'
+block content
+  .sqs-block-content
+    //h1(style='text-align:center;white-space:pre-wrap;padding-bottom:10px')
+    //  strong Photos
+  .sqs-layout.sqs-grid-12.columns-12(data-type='page')
+    .sqs-layout.sqs-grid-12.columns-12(data-type='page')
+      .row.sqs-row
+        +photo('/images/photos/photo1.jpeg')
+        +photo('/images/photos/photo2.jpeg')
+        +photo('/images/photos/photo3.jpeg')
+      .row.sqs-row
+        +photo('/images/photos/photo4.jpeg')
+        +photo('/images/photos/photo5.jpeg')
+        +photo('/images/photos/photo6.jpeg')
+      .row.sqs-row
+        +photo('/images/photos/photo7.jpeg')
+        +photo('/images/photos/photo8.jpeg')
+        +photo('/images/photos/photo9.jpeg')
+      .row.sqs-row
+        +photo('/images/photos/photo10.jpeg')
+        +photo('/images/photos/photo11.jpeg')
+        +photo('/images/photos/photo12.jpeg')
