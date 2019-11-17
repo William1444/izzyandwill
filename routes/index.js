@@ -28,4 +28,5 @@ router.get('/photos', ensureAuthenticated, function (req, res) {
   res.render('photos');
 });
 
+
 module.exports = router;
