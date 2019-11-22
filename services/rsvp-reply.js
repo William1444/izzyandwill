@@ -32,7 +32,7 @@ const email = ({to, firstName, lastName, attending, otherGuests, room}) => {
 };
 
 const html = ({firstName, lastName, attending, otherGuests, room}) => {
-  const roomSummary = room.room ? room.room : 'NA';
+  const roomSummary = room && room.room || 'NA';
   const helloMsg = `
 <p>Hi ${firstName}</p>`
   const anyChanges = `

@@ -48,13 +48,13 @@ block content
             .sqs-block-content
               .form-wrapper
                 .form-inner-wrapper
-                  form#rsvp(autocomplete='on' method='POST' action=`/rsvp?key=${key}` name="rsvp")
+                  form#rsvp(autocomplete='on' method='POST' action=`/rsvp?key=${key}`)
                     .field-list.clear
                       #email.form-item.field.email.required
                         label.title(for='email-field')
                           | Email Address
                           span.required *
-                        input#email-field.field-element.form-control(name='email' type='email' autocomplete='email' required=true spellcheck='false' onblur="requiredInput(this, 'email')")
+                        input#email-field.field-element.form-control(name='email' type='email' autocomplete='email' required=true spellcheck='false' onblur="onBlurDefault(this, 'email')")
                         span.error-message-email Invalid email address
                       fieldset#name.form-item.fields.name.required
                         .title
@@ -73,28 +73,28 @@ block content
                         div.title(for='attending-field')
                           | Are you attending?
                           span.required *
-                        input#attending-yes.form-radio(type='radio' name='attending' value='Yes' checked=attending === 'Yes')
+                        input#attending-yes.form-radio(onclick="attendingYes()" type='radio' name='attending' value='Yes' checked=attending === 'Yes')
                         label(for='attending-yes') Yes
                         <br>
-                        input#attending-no.form-radio(type='radio' name='attending' value='No' checked=attending === 'No')
+                        input#attending-no.form-radio(onclick="attendingNo()" type='radio' name='attending' value='No' checked=attending === 'No')
                         label(for='attending-no') No
-                      #other-guests.form-item.field.text.required
-                        label.title(for='other-guests-field')
-                          | Who else is coming with you?
-                          span.required *
-                        input#other-guests-field.field-element.text(type='text' name='otherGuests' required=true value=otherGuests)
+                      #attending-answer-yes(style='display:none')
+                        #other-guests.form-item.field.text.required
+                          label.title(for='other-guests-field') Is anyone on the invite not able to make it?
+                            span.required *
+                          input#other-guests-field.field-element.text(type='text' name='otherGuests' value=otherGuests)
+                        #room.form-item.field.select.required
+                          label.title(for='room-field')
+                            | Choose Room
+                            span.required *
+                          .description List of rooms can be found here. Select NA if you do not wish to stay at the wedding venue
+                          select#room-field.select-css(name='roomId')
+                            option(value="" disabled=true selected=true style="display: none") Select room
+                            each room in rooms
+                              option(value=`${room._id}`)=room.room
                       #message-wrapper.form-item.field.textarea
                         label.title(for='message-field') Message
                         textarea#message.field-element(maxlength=1000 name='message' form='rsvp' method="post")=message
-                      #room.form-item.field.select.required
-                        label.title(for='room-field')
-                          | Choose Room
-                          span.required *
-                        .description List of rooms can be found here. Select NA if you do not wish to stay at the wedding venue
-                        select#room-field.select-css(name='roomId' required=true)
-                          option(value="" disabled=true selected=true style="display: none") Select room
-                          each room in rooms
-                            option(value=`${room._id}`)=room.room
                     .form-button-wrapper.form-button-wrapper--align-center
                       input.button.sqs-system-button.sqs-editable-button(type='submit' value='RSVP')
                     .hidden.form-submission-text Thank you!

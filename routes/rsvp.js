@@ -75,13 +75,12 @@ function assignRoom(id, email) {
 router.post('/', ensureAuthenticated, function (req, res, next) {
   console.info(req.body);
   const body = req.body;
-  const roomId = Number(body.roomId);
   const email = body.email;
   const firstName = body.firstName;
   const lastName = body.lastName;
   const attending = body.attending === 'Yes';
-  console.info(attending, body.attending);
-  const otherGuests = body.otherGuests;
+  const roomId = attending && Number(body.roomId);
+  const otherGuests = !attending && 'na' || body.otherGuests;
   const message = body.message;
   let room;
   let hasSelectedRoom = roomId !== NA_ROOM_ID;

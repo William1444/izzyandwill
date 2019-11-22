@@ -18981,3 +18981,12 @@ input:invalid {
     height: 400px;  /* The height is 400 pixels */
     width: 100%;  /* The width is the width of the web page */
 }
+
+form.invalid [type='submit'] {
+    background-color: #938988;
+    pointer-events:none;
+}
+
+form.disabled {
+    pointer-events:none;
+}
