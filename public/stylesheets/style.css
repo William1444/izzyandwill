@@ -13299,11 +13299,11 @@ div.sqs-block-opentable-v2 .squarespace-opentable-new-age-wrapper.opentable-bloc
     width: 40%
 }
 
-.form-wrapper .field-list .form-item.error, .form-wrapper .field-list .form-item.error .caption, .form-wrapper .field-list .form-item.error .title, .form-wrapper .field-list .form-item.error .description, .error-message-email, .error {
+.form-wrapper .field-list .form-item.error.touched, .form-wrapper .field-list .form-item.error.touched .caption, .form-wrapper .field-list .form-item.error.touched .title, .form-wrapper .field-list .form-item.error.touched .description, .form-item.touched .error-message-email, .form-item.touched .error {
     color: #bd0000
 }
 
-.form-wrapper .field-list .form-item.error input, .form-wrapper .field-list .form-item.error textarea {
+.form-wrapper .field-list .form-item.error.touched input, .form-wrapper .field-list .form-item.error.touched textarea {
     border: 1px solid #e99292
 }
 
@@ -18955,7 +18955,7 @@ input:invalid {
     font-size: 12px;
 }
 
-.error-email .error-message-email, .error-email.error-message-email {
+.touched.error-email .error-message-email, .error-email.error-message-email.touched {
     display: block
 }
 

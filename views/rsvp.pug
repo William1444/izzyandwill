@@ -9,7 +9,7 @@ block content
       p
         .error This email has already sent an RSVP.
         | If you've already submitted  the RSVP but would like to let us know of any changes such as: you are now no longer able to make it, or you would like to book a room then please email
-        a(href=`mailto:${global.email}`)=` ${global.email}`
+        a(href=`mailto:${email}`)=` ${email}`
         | .
         <br> Otherwise please use a different email address.
     else if success
@@ -54,7 +54,7 @@ block content
                         label.title(for='email-field')
                           | Email Address
                           span.required *
-                        input#email-field.field-element.form-control(name='email' type='email' autocomplete='email' required=true spellcheck='false' onblur="onBlurDefault(this, 'email')")
+                        input#email-field.field-element.form-control(name='email' type='email' autocomplete='email' required=true spellcheck='false' validator-status='email' validator='requiredInput')
                         span.error-message-email Invalid email address
                       fieldset#name.form-item.fields.name.required
                         .title
@@ -63,13 +63,13 @@ block content
                         legend Name
                         #first-name.field.first-name.form-item
                           label.caption
-                            input#firstName-field.field-element.field-control(name='firstName' x-autocompletetype='given-name' type='text' spellcheck='false' maxlength='30' data-title='First' value=firstName required=true onblur="requiredInput(this, 'first-name'); checkTouchedFieldsErrors(['lastName-field', 'firstName-field'], 'name')")
+                            input#firstName-field.field-element.field-control(validator='requiredInput' validator-status='first-name' name='firstName' x-autocompletetype='given-name' type='text' spellcheck='false' maxlength='30' data-title='First' value=firstName required=true)
                             |                   First Name
                         #last-name.field.last-name.form-item
                           label.caption
-                            input#lastName-field.field-element.field-control(name='lastName' x-autocompletetype='surname' type='text' spellcheck='false' maxlength='30' data-title='Last' value=lastName required=true onblur="requiredInput(this, 'last-name'); checkTouchedFieldsErrors(['lastName-field', 'firstName-field'], 'name')")
+                            input#lastName-field.field-element.field-control(validator='requiredInput' validator-status='last-name' name='lastName' x-autocompletetype='surname' type='text' spellcheck='false' maxlength='30' data-title='Last' value=lastName required=true)
                             |                   Last Name
-                      #attending.form-item.field.radio.required
+                      #attending.form-item.field.radio.required(validator='attendingValidator' validator-status='attending')
                         div.title(for='attending-field')
                           | Are you attending?
                           span.required *
@@ -82,19 +82,19 @@ block content
                         #other-guests.form-item.field.text.required
                           label.title(for='other-guests-field') Is anyone on the invite not able to make it?
                             span.required *
-                          input#other-guests-field.field-element.text(type='text' name='otherGuests' value=otherGuests)
+                          input#other-guests-field.field-element.text(validator='requiredInput' validator-status='other-guests' type='text' name='otherGuests' value=otherGuests)
                         #room.form-item.field.select.required
                           label.title(for='room-field')
                             | Choose Room
                             span.required *
                           .description List of rooms can be found here. Select NA if you do not wish to stay at the wedding venue
-                          select#room-field.select-css(name='roomId')
+                          select#room-field.select-css(name='roomId' validator-status='room' validator='requiredOption')
                             option(value="" disabled=true selected=true style="display: none") Select room
                             each room in rooms
                               option(value=`${room._id}`)=room.room
                       #message-wrapper.form-item.field.textarea
                         label.title(for='message-field') Message
-                        textarea#message.field-element(maxlength=1000 name='message' form='rsvp' method="post")=message
+                        textarea#message.field-element(validator-status='message-wrapper' maxlength=1000 name='message' form='rsvp' method="post")=message
                     .form-button-wrapper.form-button-wrapper--align-center
                       input.button.sqs-system-button.sqs-editable-button(type='submit' value='RSVP')
                     .hidden.form-submission-text Thank you!

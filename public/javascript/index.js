@@ -35,26 +35,23 @@ function checkTouchedFieldsErrors(ids, forId) {
   }
 }
 
-function requiredInput(input, forId) {
-  const statusElements = [document.getElementById(forId), input];
-  if (input.value.length < 1) {
-    //red border
-    addErrorClass(statusElements, 'empty');
-    formErrors[input.id] = 'empty';
-  } else if ((input.type === "email" && !emailRegex.test(input.value))) {
-    addErrorClass(statusElements, 'email');
-    formErrors[input.id] = 'email';
-  } else {
-    removeClasses(statusElements, ['error', 'error-empty', 'error-email']);
-    delete formErrors[input.id];
-  }
-  validateForm();
-  input.classList.add('touched');
+function isHidden(el) {
+  return (el.offsetParent === null)
 }
 
-function onBlurDefault(el, forId) {
-  el.classList.add('touched');
-  requiredEmail(el.id, forId);
+function getValidatorStatusElement(el) {
+  const validatorStatusId = el.getAttribute('validator-status');
+  return document.getElementById(validatorStatusId);
+}
+
+function initOnBlurDefault(validationFn) {
+  return event => {
+    let target = event.target;
+    target.classList.add('touched');
+    getValidatorStatusElement(target).classList.add('touched');
+    valildationFns[validationFn](target);
+    validateForm();
+  };
 }
 
 function requiredEmail(id, forId) {
@@ -72,7 +69,6 @@ function requiredEmail(id, forId) {
       removeClasses(statusElements, ['error', 'error-empty', 'error-email']);
       delete formErrors[input.id];
     }
-    validateForm();
   }
 }
 
@@ -90,26 +86,74 @@ function initMap() {
   var marker = new google.maps.Marker({position: orchardleigh, map: map});
 }
 
-function attending(attending) {
-  let attendingId = 'attending-answer-' + attending;
-  document.getElementById(attendingId).style.display='block';
-  document.getElementById(attendingId).style.display='none';
-  document.getElementById('other-guests-field').attributes["required"] = attending === 'yes';
-  document.getElementById('room-field').attributes["required"] = attending === 'yes';
+function requiredInput(target) {
+  if (isHidden(target)) {
+    return;
+  }
+  const input = target;
+  const statusElement = getValidatorStatusElement(input);
+  const statusElements = [statusElement, input];
+  if (input.value.length < 1) {
+    //red border
+    addErrorClass(statusElements, 'empty');
+    formErrors[input.id] = 'empty';
+  } else if ((input.type === "email" && !emailRegex.test(input.value))) {
+    addErrorClass(statusElements, 'email');
+    formErrors[input.id] = 'email';
+  } else {
+    removeClasses(statusElements, ['error', 'error-empty', 'error-email']);
+    delete formErrors[input.id];
+  }
+}
+
+function attendingValidator(target) {
+  const radios = target.parentNode.getElementsByTagName('input');
+  for (let i = 0; i < radios.length; i++) {
+    if (radios[i].checked) {
+      delete formErrors[radios.id];
+      return;
+    }
+  }
+  formErrors[radios.id] = 'required';
+  validateForm();
+}
+
+function requiredOption(target) {
+  if (!target.value || isNaN(target.value)) {
+    formErrors[target.id] = 'required';
+  } else {
+    delete formErrors[target.id];
+  }
+  validateForm();
 }
 
 function attendingYes() {
-  document.getElementById('attending-answer-yes').style.display='block';
-  document.getElementById('attending-answer-no').style.display='none';
+  document.getElementById('attending-answer-yes').style.display = 'block';
   document.getElementById('other-guests-field').attributes["required"] = true;
   document.getElementById('room-field').attributes["required"] = true;
+  rerunValidation(document.getElementById('rsvp'));
+  validateForm();
 }
 
 function attendingNo() {
-  document.getElementById('attending-answer-yes').style.display='none';
-  document.getElementById('attending-answer-no').style.display='block';
-  document.getElementById('other-guests-field').attributes["required"] = false
-  document.getElementById('room-field').attributes["required"] = false;
+  document.getElementById('attending-answer-yes').style.display = 'none';
+
+  const otherGuestsField = document.getElementById('other-guests-field');
+  otherGuestsField.attributes["required"] = false;
+  otherGuestsField.value = '';
+  otherGuestsField.classList.remove('touched');
+  document.getElementById('other-guests').classList.remove('touched');
+
+  let roomField = document.getElementById('room-field');
+  roomField.attributes["required"] = false;
+  roomField.value = '';
+  roomField.classList.remove('touched');
+  document.getElementById('room').classList.remove('touched');
+
+  rerunValidation(document.getElementById('rsvp'));
+  delete formErrors['room-field']; // this is lazy.. sorry
+  delete formErrors['other-guests-field']; // this is lazy.. sorry
+  validateForm();
 }
 
 function initialiseFormErrors(form) {
@@ -118,25 +162,53 @@ function initialiseFormErrors(form) {
   });
 }
 
-function attachOnchangeToElements(parent, tagNames) {
-  tagNames.forEach(t => {
-    const elements = parent.getElementsByTagName(t);
-    for (let i = 0; i < elements.length; i++) {
-      elements[i].onchange = validateForm;
-    }
-  });
+const valildationFns = {
+  requiredInput,
+  attendingValidator,
+  requiredOption
+};
+
+function initValidator(target, validatorFn) {
+  const fn = valildationFns[validatorFn];
+  fn(target);
+  return e => {
+    fn(e.target);
+    validateForm();
+  }
+}
+
+function rerunValidation(parent) {
+  const elements = parent.querySelectorAll('[validator]');
+  for (let i = 0; i < elements.length; i++) {
+    const validatorFn = elements[i].getAttribute('validator');
+    valildationFns[validatorFn](elements[i]);
+  }
+}
+
+function attachOnchangeToElements(parent) {
+  const elements = parent.querySelectorAll('[validator]');
+  for (let i = 0; i < elements.length; i++) {
+    const validatorFn = elements[i].getAttribute('validator');
+    elements[i].addEventListener('onchange', initValidator(elements[i], validatorFn));
+    elements[i].addEventListener('change', initValidator(elements[i], validatorFn));
+    elements[i].addEventListener('onkeyup', initValidator(elements[i], validatorFn));
+    elements[i].addEventListener('keyup', initValidator(elements[i], validatorFn));
+    elements[i].addEventListener('onblur', initOnBlurDefault(validatorFn));
+    elements[i].addEventListener('blur', initOnBlurDefault(validatorFn));
+  }
+  rerunValidation(parent);
 }
 
 function initialiseFormValidation(form) {
   initialiseFormErrors(form);
-  attachOnchangeToElements(form, ['input', 'select', 'textarea']);
+  attachOnchangeToElements(form);
   const emailValidationEvents = ['onkeyup', 'keyup'];
   const emailInput = document.getElementById('email');
   emailValidationEvents.forEach(event => emailInput.addEventListener(event, () => requiredEmail('email-field', 'email')));
   validateForm();
 }
 
-function validateForm(){
+function validateForm() {
   if (Object.keys(formErrors).length < 1) {
     document.getElementById('rsvp').classList.remove('invalid')
   } else {
@@ -144,11 +216,7 @@ function validateForm(){
   }
 }
 
-function key(){
-  debugger;
-}
-
-function init(){
+function init() {
   const form = document.getElementById('rsvp');
   initialiseFormValidation(form);
   form.addEventListener('submit', function (event) {
@@ -166,16 +234,16 @@ function init(){
 };
 
 if (document.attachEvent) {
-  document.attachEvent("onreadystatechange", function(){
+  document.attachEvent("onreadystatechange", function () {
     // check if the DOM is fully loaded
-    if(document.readyState === "complete"){
+    if (document.readyState === "complete") {
       // remove the listener, to make sure it isn't fired in future
       document.detachEvent("onreadystatechange", arguments.callee);
       init();
     }
   });
 } else {
-  document.addEventListener("DOMContentLoaded", function(){
+  document.addEventListener("DOMContentLoaded", function () {
     if (
       document.readyState === "complete" ||
       (document.readyState !== "loading" && !document.documentElement.doScroll)
