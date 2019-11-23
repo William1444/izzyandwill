@@ -54,23 +54,23 @@ function initOnBlurDefault(validationFn) {
   };
 }
 
-function requiredEmail(id, forId) {
-  const input = document.getElementById(id);
-  if (input.classList.contains('touched')) {
-    const statusElements = [document.getElementById(forId), input];
-    if (input.value.length < 1) {
-      //red border
-      addErrorClass(statusElements, 'empty');
-      formErrors[input.id] = 'empty';
-    } else if ((input.type === "email" && !emailRegex.test(input.value))) {
-      addErrorClass(statusElements, 'email');
-      formErrors[input.id] = 'email';
-    } else {
-      removeClasses(statusElements, ['error', 'error-empty', 'error-email']);
-      delete formErrors[input.id];
-    }
-  }
-}
+// function requiredEmail(id, forId) {
+//   const input = document.getElementById(id);
+//   if (input.classList.contains('touched')) {
+//     const statusElements = [document.getElementById(forId), input];
+//     if (input.value.length < 1) {
+//       //red border
+//       addErrorClass(statusElements, 'empty');
+//       formErrors[input.id] = 'empty';
+//     } else if ((input.type === "email" && !emailRegex.test(input.value))) {
+//       addErrorClass(statusElements, 'email');
+//       formErrors[input.id] = 'email';
+//     } else {
+//       removeClasses(statusElements, ['error', 'error-empty', 'error-email']);
+//       delete formErrors[input.id];
+//     }
+//   }
+// }
 
 function toggleMenu(id) {
   document.getElementById(id).classList.toggle('menu-open')
@@ -200,11 +200,11 @@ function attachOnchangeToElements(parent) {
 }
 
 function initialiseFormValidation(form) {
-  initialiseFormErrors(form);
+  // initialiseFormErrors(form);
   attachOnchangeToElements(form);
-  const emailValidationEvents = ['onkeyup', 'keyup'];
-  const emailInput = document.getElementById('email');
-  emailValidationEvents.forEach(event => emailInput.addEventListener(event, () => requiredEmail('email-field', 'email')));
+  // const emailValidationEvents = ['onkeyup', 'keyup'];
+  // const emailInput = document.getElementById('email');
+  // emailValidationEvents.forEach(event => emailInput.addEventListener(event, () => requiredEmail('email-field', 'email')));
   validateForm();
 }
 
@@ -216,21 +216,65 @@ function validateForm() {
   }
 }
 
+function createRoomOptions(rooms) {
+  function createRoomOptionNode(value, text) {
+    let option = document.createElement('option');
+    option.setAttribute('value', value);
+    option.appendChild(document.createTextNode(text));
+    return option;
+  }
+
+  const roomSelect = document.getElementById('room-field');
+
+  let selectOption = createRoomOptionNode('', 'Select room');
+  selectOption.setAttribute('disabled', true);
+  selectOption.setAttribute('selected', true);
+  selectOption.setAttribute('style', 'style="display: none"');
+
+  debugger;
+  roomSelect.appendChild(selectOption);
+
+  rooms
+    .filter(room => !room.assignee && !room.paid)
+    .sort((a, b) => a.room < b.room ? -1 : 1)
+    .map(room => createRoomOptionNode(room._id, room.room))
+    .forEach(optionNode => roomSelect.appendChild(optionNode));
+
+}
+
 function init() {
+  var xmlhttp = new XMLHttpRequest();
+  var url = "/room";
+
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var myArr = JSON.parse(this.responseText);
+      createRoomOptions(myArr);
+    }
+  };
+
+  xmlhttp.open("GET", url, true);
+  xmlhttp.send();
+
   const form = document.getElementById('rsvp');
   initialiseFormValidation(form);
-  form.addEventListener('submit', function (event) {
-    let attendingClassList = document.getElementById('attending').classList;
-    if (!emailValid || document.getElementById('attending-yes').value !== 'Yes' || document.getElementById('attending-yes').value !== 'No') {
-      event.preventDefault();
-      attendingClassList.add('error');
-      attendingClassList.add('error-required');
-    } else {
-      form.classList.add('disabled');
-      attendingClassList.remove('error');
-      attendingClassList.remove('error-required');
-    }
-  });
+  if (document.getElementById('attending-yes').checked) {
+    attendingYes();
+  } else if (document.getElementById('attending-no').checked) {
+    attendingNo();
+  }
+  // form.addEventListener('submit', function (event) {
+  //   let attendingClassList = document.getElementById('attending').classList;
+  //   if (emailValid && (document.getElementById('attending-yes').checked || document.getElementById('attending-yes').checked)) {
+  //     form.classList.add('disabled');
+  //     attendingClassList.remove('error');
+  //     attendingClassList.remove('error-required');
+  //   } else {
+  //     event.preventDefault();
+  //     attendingClassList.add('error');
+  //     attendingClassList.add('error-required');
+  //   }
+  // });
 };
 
 if (document.attachEvent) {

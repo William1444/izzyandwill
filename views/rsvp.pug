@@ -3,6 +3,7 @@ include mixins/_headerImage
 block variables
   - var view = 'RSVP'
 block content
+  script(type='text/javascript' src='/javascript/rsvp.js')
   .sqs-layout.sqs-grid-12.columns-12.sqs-frontend-overlay-editor-widget-host(data-type='page' style='')
     if errorEmailExists
       h2 UH OH!
@@ -89,9 +90,6 @@ block content
                             span.required *
                           .description List of rooms can be found here. Select NA if you do not wish to stay at the wedding venue
                           select#room-field.select-css(name='roomId' validator-status='room' validator='requiredOption')
-                            option(value="" disabled=true selected=true style="display: none") Select room
-                            each room in rooms
-                              option(value=`${room._id}`)=room.room
                       #message-wrapper.form-item.field.textarea
                         label.title(for='message-field') Message
                         textarea#message.field-element(validator-status='message-wrapper' maxlength=1000 name='message' form='rsvp' method="post")=message

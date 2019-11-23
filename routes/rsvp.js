@@ -39,8 +39,7 @@ router.get('/', ensureAuthenticated, function (req, res, next) {
         .filter(r => !isRoomAssigned(r))
         .sort((a, b) => a.room > b.room ? 1 : -1);
       res.render('rsvp', Object.assign({
-        rooms: [{room: 'NA', _id: NA_ROOM_ID}].concat(unassignedRooms),
-        key: req.query.key
+        rooms: [{room: 'NA', _id: NA_ROOM_ID}].concat(unassignedRooms)
       }, getValidQueryParamsForModel(req)))
     })
     .catch(err => next(err))
@@ -84,22 +83,22 @@ router.post('/', ensureAuthenticated, function (req, res, next) {
   const otherGuests = !attending && 'na' || body.otherGuests;
   const message = body.message;
   let room;
-  let hasSelectedRoom = roomId !== NA_ROOM_ID;
+  let hasSelectedRoom = roomId && roomId !== NA_ROOM_ID;
   Rsvp.findOne({email})
     .then(rsvp => {
       if (rsvp) {
-        res.redirect(url.format({
-          pathname: '/rsvp',
-          query: {roomId, firstName, lastName, attending, otherGuests, errorEmailExists: true, message}
-        }));
-        throw new Error('email exists');
+        res.render('rsvp-result', {roomId, firstName, lastName, attending, otherGuests, errorEmailExists: true, message});
+        throw new Error('USER_EMAIL_EXISTS');
       }
     })
-    .then(() => assignRoom(roomId, email))
+    .then(() => attending && assignRoom(roomId, email))
     .then(r => room = r)
     .catch(e => {
       if (e.message === ERROR_ROOM_ALREADY_ASSIGNED) {
-        res.render('rsvp', {room, error: {roomTaken: true}})
+        res.render('rsvp-result', {room, error: {roomTaken: true}});
+        throw new Error('USER_ROOM_TAKEN');
+      } else {
+        throw e;
       }
     })
     .then(() => Rsvp.init())
@@ -117,7 +116,12 @@ router.post('/', ensureAuthenticated, function (req, res, next) {
       : rsvpReply.email({to: email, firstName, lastName, otherGuests, room, attending}))
     .then(r => isTest
       ? res.send(r)
-      : res.redirect(url.format({pathname: '/rsvp', query: {success: true, hasSelectedRoom, attending}})));
+      : res.render('rsvp-result', {success: true, hasSelectedRoom, attending}))
+    .catch(e => {
+      if (e.message !== 'USER_ROOM_TAKEN' && e.message !== 'USER_EMAIL_EXISTS') {
+        res.send(e.message);
+      };
+    });
 });
 
 router.get('/test', ensureAuthenticated, ensureAdmin, function (req, res, next) {

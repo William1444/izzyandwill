@@ -66,8 +66,8 @@ call Izzy on <a href="tel:07736687708"></a>07736687708</p>`;
   <td style="font-weight: normal">${attending ? 'Yes!' : 'No'}</td>
 </tr>
 <tr>
-  <td>Who else is coming with you:</td>
-  <td style="font-weight: normal">${otherGuests ? otherGuests : 'Just me!'}</td>
+  <td>Is anyone on the invite not able to make it:</td>
+  <td style="font-weight: normal">${otherGuests ? otherGuests : 'Nope!'}</td>
 </tr>
 <tr>
   <td>Room:</td>
