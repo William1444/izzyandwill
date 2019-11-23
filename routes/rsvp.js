@@ -5,6 +5,7 @@ const router = express.Router();
 const Rsvp = require('./../models/rsvp');
 const Room = require('./../models/room');
 const rsvpReply = require('./../services/rsvp-reply');
+const { isTest } = require('./../config');
 const {ensureAuthenticated, ensureAdmin} = require('./../config/auth');
 const NA_ROOM_ID = -1;
 const ERROR_ROOM_ALREADY_ASSIGNED = 'ROOM_ALREADY_ASSIGNED';
@@ -111,12 +112,12 @@ router.post('/', ensureAuthenticated, function (req, res, next) {
       message,
       roomId
     }))
-    .then(() => rsvpReply.email(
-      {to: email, firstName, lastName, otherGuests, room, attending}))
-    .then(() => res.redirect(url.format({
-      pathname: '/rsvp',
-      query: {success: true, hasSelectedRoom, attending}
-    })))
+    .then(() => isTest
+      ? rsvpReply.html({to: email, firstName, lastName, otherGuests, room, attending})
+      : rsvpReply.email({to: email, firstName, lastName, otherGuests, room, attending}))
+    .then(r => isTest
+      ? res.send(r)
+      : res.redirect(url.format({pathname: '/rsvp', query: {success: true, hasSelectedRoom, attending}})));
 });
 
 router.get('/test', ensureAuthenticated, ensureAdmin, function (req, res, next) {
