@@ -18,8 +18,15 @@ block content
             if noMatch
               p
                 .error-message Whoops! We didn't find someone with those details on the invite list.
-                | Please try again with you full first name! Alternatively email us on
-                a(href=`mailto:${email}`)  #{email}
+                | Please try again with your name as it appears on the invitation! Alternatively email us on
+                a(href=`mailto:${fromEmail}`)  #{fromEmail}
+                |  or call us on
+                a(href="tel:07736687708")  #{tel}.
+            else if tooManyMatch
+              p
+                .error-message Whoops! Something went wrong.. We have found too many invitees with the name #{firstName} #{lastName}.
+                | Please email us on
+                a(href=`mailto:${fromEmail}`)  #{fromEmail}
                 |  or call us on
                 a(href="tel:07736687708")  #{tel}.
 

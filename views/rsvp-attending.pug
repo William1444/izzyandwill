@@ -1,0 +1,44 @@
+extends _layout
+include mixins/_headerImage
+block variables
+  - var view = 'RSVP'
+block content
+  script(type='text/javascript' src='/javascript/rsvp-attending.js')
+  .sqs-layout.sqs-grid-12.columns-12.sqs-frontend-overlay-editor-widget-host(data-type='page' style='')
+
+    +headerImage('/images/rsvp.jpeg')
+    .row.sqs-row
+      .col.sqs-col-2.span-2
+        #block-59856a05928f013bbe9b.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
+          .sqs-block-content &nbsp;
+      .col.sqs-col-8.span-8
+        #block-cc7de632778bce2a9d10.sqs-block.html-block.sqs-block-html(data-block-type='2')
+          .sqs-block-content
+            h2(style='text-align:center;white-space:pre-wrap;') Please RSVP by February 1, 2020
+
+        #block-76326305fe9b1e764ab3.sqs-block.form-block.sqs-block-form(data-block-type='9')
+          .sqs-block-content
+            .form-wrapper
+              .form-inner-wrapper
+                form#rsvp(autocomplete='on' method='POST' action=`/rsvp`)
+                  .field-list.clear
+                    h3 Who is attending?
+                    each inviteeFullName, index in inviteesFullName
+                      div.form-item.field.radio.required(id=`attending-${index}` validator='attendingValidator' validator-status='attending')
+                        div.title(for='attending-field')
+                          | #{inviteeFullName}
+                          span.required *
+                        input.form-radio(id=`attending-yes-${index}` onclick="toggleAttending()" type='radio' name=`attending-${index}` value=`Yes-${inviteeFullName}` checked=attending === 'Yes')
+                        label(for=`attending-yes-${index}`) Yes
+                        <br>
+                        input.form-radio(id=`attending-no-${index}` onclick="toggleAttending()" type='radio' name=`attending-${index}` value=`No-${inviteeFullName}` checked=attending === 'No')
+                        label(for=`attending-no-${index}`) No
+                  .form-button-wrapper.form-button-wrapper--align-center
+                    input.button.sqs-system-button.sqs-editable-button(type='submit' value='RSVP')
+                  .hidden.form-submission-text Thank you!
+                  .hidden.form-submission-html(data-submission-html='')
+        #block-35c8d0e310cddd9e6eb3.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
+          .sqs-block-content &nbsp;
+      .col.sqs-col-2.span-2
+        #block-7f54ce32d89201b6edd1.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
+          .sqs-block-content &nbsp;

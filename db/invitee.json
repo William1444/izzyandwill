@@ -6,24 +6,57 @@
         "fullName": "William Lacy",
         "match": {
           "firstName": [
-            "Will",
-            "William"
+            "will",
+            "william"
           ],
           "lastName": [
-            "Lacy"
+            "lacy"
           ]
         }
       },
       {
-        "fullname": "Isabel Lacy",
+        "fullName": "Isabel Miller",
         "match": {
           "firstName": [
-            "Izzy",
-            "Isabel"
+            "izzy",
+            "isabel"
           ],
           "lastName": [
-            "Miller",
-            "Lacy"
+            "miller",
+            "lacy"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "_id": 2,
+    "invitees": [
+      {
+        "fullName": "John Smith",
+        "match": {
+          "firstName": [
+            "john"
+          ],
+          "lastName": [
+            "smith"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "_id": 3,
+    "invitees": [
+      {
+        "fullName": "Frank-John Smith",
+        "match": {
+          "firstName": [
+            "john",
+            "frank"
+          ],
+          "lastName": [
+            "smith"
           ]
         }
       }

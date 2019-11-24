@@ -1,7 +1,7 @@
 const {fromEmail, fromTel, mapsApiKey} = require('./../config');
 module.exports = function (req, res, next) {
   res.locals = ({
-    email: fromEmail,
+    fromEmail,
     tel: fromTel,
     mapsApiKey,
     global: {

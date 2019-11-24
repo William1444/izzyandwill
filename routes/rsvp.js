@@ -11,6 +11,7 @@ const {ensureAuthenticated, ensureAdmin} = require('./../config/auth');
 const NA_ROOM_ID = -1;
 const ERROR_ROOM_ALREADY_ASSIGNED = 'ROOM_ALREADY_ASSIGNED';
 const VALID_RSVP_QUERY_PARAMS = ['roomId', 'firstName', 'lastName', 'attending', 'otherGuests', 'errorEmailExists', 'message', 'success', 'hasSelectedRoom'];
+const USER_ERRORS = ['USER_EMAIL_EXISTS', 'USER_NO_MATCH', 'USER_TOO_MANY_MATCHES'];
 
 function isRoomAssigned(room) {
   return room.paid || (room.assignee && room.assignee.length > 1);
@@ -42,16 +43,16 @@ router.post('/', ensureAuthenticated, function (req, res, next) {
   const firstName = body.firstName;
   const lastName = body.lastName;
   let inviteeFullNames, inviteeId;
-  Invitee.find({firstName: firstName, lastName: lastName})
+  Invitee.find({'invitees.match.firstName': firstName.toLowerCase(), 'invitees.match.lastName': lastName.toLowerCase()})
     .then(invitees => {
       let sysErrorMessage, tooManyMatch = false, noMatch = false;
       if (invitees.length === 1) {
         inviteeFullNames = invitees[0].invitees.map(i => i.fullName);
         inviteeId = invitees[0]._id;
+        return;
       } else if (invitees.length > 1) {
         sysErrorMessage = 'USER_TOO_MANY_MATCHES';
         tooManyMatch = true;
-        // userErrorMessage = `Whoops! Something went wrong.. We have found too many ${firstName} ${lastName}. Please email ${fromEmail} or call ${fromTel}`
       } else if (invitees.length === 0) {
         sysErrorMessage = 'USER_NO_MATCH';
         noMatch = true;
@@ -59,22 +60,44 @@ router.post('/', ensureAuthenticated, function (req, res, next) {
         throw new Error(`Issue finding ${firstName} and ${lastName}`);
       }
       let locals = {tooManyMatch, noMatch, firstName, lastName};
-      console.info(locals);
       res.render('rsvp-invitee', locals);
       throw new Error(sysErrorMessage);
     })
-    .then(() => Rsvp.findOne({inviteeId: _id}))
-    .then(rsvp =>
-      res.render('rsvp-details', {
-        inviteeFullNames,
-        rsvp
-      }))
+    .then(() => res.redirect(`/rsvp/attending/${inviteeId}`))
     .catch(e => {
       if (e.message !== 'USER_EMAIL_EXISTS' && e.message !== 'USER_NO_MATCH' && e.message !== 'USER_TOO_MANY_MATCHES') {
         console.error(e.message);
         res.send(e.message);
       }
     });
+});
+
+router.get('/attending/:inviteeId', ensureAuthenticated, function (req, res, next) {
+  const inviteeId = req.params.inviteeId;
+  let invitee;
+  Invitee.findById({_id: inviteeId})
+    .then(result => {
+      if (!result) {
+        throw new Error("NotFound")
+      }
+      invitee = result;
+    })
+    .then(() => Rsvp.findOne({inviteeId: inviteeId}))
+    .then(rsvp => {
+      res.render('rsvp-attending', {
+        inviteesFullName: invitee.invitees.map(i => i.fullName),
+        rsvp
+      })
+    })
+    .catch(e => {
+      if (USER_ERRORS.indexOf(e.message) < 0) {
+        res.send(e.message);
+      }
+    });
+});
+
+router.get('/email', ensureAuthenticated, function (req, res, next) {
+  res.render('rsvp-invitee');
 });
 
 /* GET rsvp */

@@ -10,7 +10,7 @@ block content
       p
         .error This email has already sent an RSVP.
         | If you've already submitted  the RSVP but would like to let us know of any changes such as: you are now no longer able to make it, or you would like to book a room then please email
-        a(href=`mailto:${email}`)=` ${email}`
+        a(href=`mailto:${fromEmail}`)=` ${fromEmail}`
         | .
         <br> Otherwise please use a different email address.
     else if success
@@ -18,7 +18,7 @@ block content
       if hasSelectedRoom
         p You will soon receive an email to confirm. We are delighted that you wish to stay with us at the venue. The email contains instructions on how to pay for and secure the room.
         | If you do not receive anything within 24 hours, or have any other query then please email
-        a(href="mailto:orchardleigh.willandizzy@gmail.com")=' orchardleigh.willandizzy@gmail.com'
+        a(href="mailto:#{fromEmail}")=' #{fromEmail}'
         | .
       else if attending
         p You will soon receive an email to confirm.
@@ -28,7 +28,7 @@ block content
           b do not
           |
           | require a room at the venue. If you do not receive anything within 24 hours, or have any other query then please email
-          a(href="mailto:orchardleigh.willandizzy@gmail.com")=' orchardleigh.willandizzy@gmail.com'
+          a(href="mailto:#{fromEmail}")=' #{fromEmail}'
           | .
       else
         p We are really sorry to here that you are not able to join us, but understand that not everyone will be able to attend our day.
