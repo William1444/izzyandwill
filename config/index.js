@@ -6,6 +6,7 @@ module.exports = {
   mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/izzyandwill',
   sendgridApiKey: process.env.SENDGRID_API_KEY || loadDefaultSendGridKeyFromFile(),
   fromEmail: process.env.FROM_EMAIL || 'orchardleigh.willandizzy@gmail.com',
+  fromTel: process.env.FROM_TEL || '07123123123',
   siteUrl: 'https://izzyandwill.herokuapp.com',
   userPassword: process.env.USER_PASSWORD || 'password',
   adminPassword: process.env.ADMIN_PASSWORD || 'admin',

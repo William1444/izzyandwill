@@ -1,0 +1,53 @@
+extends _layout
+include mixins/_headerImage
+block variables
+  - var view = 'RSVP'
+block content
+  //script(type='text/javascript' src='/javascript/rsvp.js')
+  .sqs-layout.sqs-grid-12.columns-12.sqs-frontend-overlay-editor-widget-host(data-type='page' style='')
+
+    +headerImage('/images/rsvp.jpeg')
+    .row.sqs-row
+      .col.sqs-col-2.span-2
+        #block-59856a05928f013bbe9b.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
+          .sqs-block-content &nbsp;
+      .col.sqs-col-8.span-8
+        #block-cc7de632778bce2a9d10.sqs-block.html-block.sqs-block-html(data-block-type='2')
+          .sqs-block-content
+            h2(style='text-align:center;white-space:pre-wrap;') Please RSVP by February 1, 2020
+            if noMatch
+              p
+                .error-message Whoops! We didn't find someone with those details on the invite list.
+                | Please try again with you full first name! Alternatively email us on
+                a(href=`mailto:${email}`)  #{email}
+                |  or call us on
+                a(href="tel:07736687708")  #{tel}.
+
+        #block-76326305fe9b1e764ab3.sqs-block.form-block.sqs-block-form(data-block-type='9')
+          .sqs-block-content
+            .form-wrapper
+              .form-inner-wrapper
+                form#rsvp(autocomplete='on' method='POST' action=`/rsvp?key=${key}`)
+                  .field-list.clear
+                    fieldset#name.form-item.fields.name.required
+                      .title
+                        | Name
+                        span.required *
+                      legend Name
+                      #first-name.field.first-name.form-item
+                        label.caption
+                          input#firstName-field.field-element.field-control(validator='requiredInput' validator-status='first-name' name='firstName' x-autocompletetype='given-name' type='text' spellcheck='false' maxlength='30' data-title='First' value=firstName required=true)
+                          |                   First Name (fullname)
+                      #last-name.field.last-name.form-item
+                        label.caption
+                          input#lastName-field.field-element.field-control(validator='requiredInput' validator-status='last-name' name='lastName' x-autocompletetype='surname' type='text' spellcheck='false' maxlength='30' data-title='Last' value=lastName required=true)
+                          |                   Last Name
+                  .form-button-wrapper.form-button-wrapper--align-center
+                    input.button.sqs-system-button.sqs-editable-button(type='submit' value='Next')
+                  .hidden.form-submission-text Thank you!
+                  .hidden.form-submission-html(data-submission-html='')
+        #block-35c8d0e310cddd9e6eb3.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
+          .sqs-block-content &nbsp;
+      .col.sqs-col-2.span-2
+        #block-7f54ce32d89201b6edd1.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
+          .sqs-block-content &nbsp;

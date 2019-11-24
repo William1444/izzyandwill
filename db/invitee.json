@@ -1,0 +1,32 @@
+[
+  {
+    "_id": 1,
+    "invitees": [
+      {
+        "fullName": "William Lacy",
+        "match": {
+          "firstName": [
+            "Will",
+            "William"
+          ],
+          "lastName": [
+            "Lacy"
+          ]
+        }
+      },
+      {
+        "fullname": "Isabel Lacy",
+        "match": {
+          "firstName": [
+            "Izzy",
+            "Isabel"
+          ],
+          "lastName": [
+            "Miller",
+            "Lacy"
+          ]
+        }
+      }
+    ]
+  }
+]
