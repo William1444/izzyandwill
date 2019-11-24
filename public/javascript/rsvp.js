@@ -231,7 +231,6 @@ function createRoomOptions(rooms) {
   selectOption.setAttribute('selected', true);
   selectOption.setAttribute('style', 'style="display: none"');
 
-  debugger;
   roomSelect.appendChild(selectOption);
 
   rooms
@@ -297,4 +296,8 @@ if (document.attachEvent) {
       document.addEventListener("DOMContentLoaded", callback);
     }
   });
+}
+
+function toggleClicked(el){
+  el.classList.toggle("clicked");
 }
