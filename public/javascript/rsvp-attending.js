@@ -1,11 +1,10 @@
-function toggleAttending() {
-  validateAttending();
+function toggleRequiredOption() {
+  validate();
 }
 
-function validateAttending() {
-  const form = document.getElementsByTagName('form');
+function validate() {
   for (var i = 0; true; i++) {
-    var el = document.getElementById(`attending-${i}`);
+    var el = document.getElementById(`required-option-${i}`);
     if (!el) {
       document.getElementById('rsvp').classList.remove('invalid');
       return;
@@ -27,7 +26,7 @@ function validateAttending() {
 }
 
 function init() {
-  validateAttending();
+  validate();
 }
 
 if (document.attachEvent) {

@@ -1,0 +1,63 @@
+extends _layout
+include mixins/_headerImage
+block variables
+  - var view = 'RSVP'
+block content
+  script(type='text/javascript' src='/javascript/rsvp-options.js')
+  .sqs-layout.sqs-grid-12.columns-12.sqs-frontend-overlay-editor-widget-host(data-type='page' style='')
+
+    +headerImage('/images/rsvp.jpeg')
+    .row.sqs-row
+      .col.sqs-col-2.span-2
+        #block-59856a05928f013bbe9b.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
+          .sqs-block-content &nbsp;
+      .col.sqs-col-8.span-8
+        #block-cc7de632778bce2a9d10.sqs-block.html-block.sqs-block-html(data-block-type='2')
+          .sqs-block-content
+            h2(style='text-align:center;white-space:pre-wrap;') Please RSVP by February 1, 2020
+
+        #block-76326305fe9b1e764ab3.sqs-block.form-block.sqs-block-form(data-block-type='9')
+          .sqs-block-content
+            .form-wrapper
+              .form-inner-wrapper
+                form#rsvp(autocomplete='on' method='POST' action=`/rsvp?key=${key}`)
+                  .field-list.clear
+                    h3 Contact details
+                    #email.form-item.field.email.required
+                      label.title(for='email-field')
+                        | Email Address
+                        span.required *
+                      input#email-field.field-element.form-control(name='email' type='email' autocomplete='email' required=true spellcheck='false' validator-status='email' validator='requiredInput')
+                      span.error-message-email Invalid email address
+                    h3 Meal Options
+                    each attendee, index in attendees
+                      div.form-item.field.radio.required(id=`required-option-${index}` validator='meatVegValidator' validator-status='attending')
+                        div.title(for='meal-field')
+                          | #{attendee.value}
+                          span.required *
+                        input.form-radio(id=`meal-vegetarian${attendee.key}` onclick=`mealMeat(this)` type='radio' name=attendee.key value=`Meat` checked=attending === 'Meat')
+                        label(for=`meal-vegetarian${index}`) Red Meat
+                        <br>
+                        input.form-radio(id=`attending-no-${attendee.key}` onclick=`mealVeg(this)` type='radio' name=attendee.key value=`Vegetarian` checked=attending === 'Vegetarian')
+                        label(for=`attending-no-${index}`) Vegetarian
+                    h3 Accommodation
+                    #room.form-item.field.select.required
+                      label.title(for='room-field')
+                        | Choose Room
+                        span.required *
+                      .description List of rooms can be found
+                        a(href='https://www.orchardleigh.net/orchardleigh-house-bedrooms')  here
+                        |. Select NA if you do not wish to stay at the wedding venue
+                      select#room-field.select-css(name='roomId' validator-status='room' validator='requiredOption')
+                    h3 Message
+                    #message-wrapper.form-item.field.textarea
+                      textarea#message.field-element(validator-status='message-wrapper' maxlength=1000 name='message' form='rsvp' method="post")=message
+                  .form-button-wrapper.form-button-wrapper--align-center
+                    input.button.sqs-system-button.sqs-editable-button(type='submit' value='RSVP')
+                  .hidden.form-submission-text Thank you!
+                  .hidden.form-submission-html(data-submission-html='')
+        #block-35c8d0e310cddd9e6eb3.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
+          .sqs-block-content &nbsp;
+      .col.sqs-col-2.span-2
+        #block-7f54ce32d89201b6edd1.sqs-block.spacer-block.sqs-block-spacer.sized.vsize-1(data-block-type='21')
+          .sqs-block-content &nbsp;

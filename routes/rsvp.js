@@ -85,7 +85,7 @@ router.get('/attending/:inviteeId', ensureAuthenticated, function (req, res, nex
     .then(() => Rsvp.findOne({inviteeId: inviteeId}))
     .then(rsvp => {
       res.render('rsvp-attending', {
-        inviteesFullName: invitee.invitees.map(i => i.fullName),
+        invitees: invitee.invitees.map(i => ({key: `attending-${i._id}`, value: i.fullName})),
         rsvp
       })
     })
@@ -93,6 +93,26 @@ router.get('/attending/:inviteeId', ensureAuthenticated, function (req, res, nex
       if (USER_ERRORS.indexOf(e.message) < 0) {
         res.send(e.message);
       }
+    });
+});
+
+router.post('/attending/:inviteeId', ensureAuthenticated, function (req, res, next) {
+  const body = req.body;
+  const attendingMap = Object.keys(body)
+    .filter(key => /^attending-[0-9]+$/.test(key))
+    .map(key => key.replace(/attending-/, ''))
+    .reduce((accum, key) => {
+      accum[Number(key)] = body[`attending-${key}`];
+      return accum;
+    }, {});
+  res.redirect(url.format({query: attendingMap, pathname: `/rsvp/options/${req.params.inviteeId}`}));
+});
+
+router.get('/options/:inviteeId', ensureAuthenticated, function (req, res, next) {
+  Invitee.findById({_id: req.params.inviteeId})
+    .then(invitee => {
+      const attendees = invitee.invitees.map(invitee => ({_id: invitee._id, fullName: invitee.fullName, isAttending: req.query[invitee._id].toLowerCase() === 'yes'}));
+      res.render('rsvp-options', {attendees: attendees.filter(a => a.isAttending).map(a => ({key: `attending-${a._id}`, value: a.fullName})), absentees: attendees.filter(a => !a.isAttending)})
     });
 });
 
