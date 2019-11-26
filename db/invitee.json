@@ -1,9 +1,7 @@
 [
   {
-    "_id": 1,
     "invitees": [
       {
-        "_id": 1,
         "fullName": "William Lacy",
         "match": {
           "firstName": [
@@ -16,7 +14,6 @@
         }
       },
       {
-        "_id": 2,
         "fullName": "Isabel Miller",
         "match": {
           "firstName": [
@@ -28,14 +25,24 @@
             "lacy"
           ]
         }
+      },
+      {
+        "fullName": "Pig Sauce",
+        "match": {
+          "firstName": [
+            "pig",
+            "piglet"
+          ],
+          "lastName": [
+            "sauce"
+          ]
+        }
       }
     ]
   },
   {
-    "_id": 2,
     "invitees": [
       {
-        "_id": 3,
         "fullName": "John Smith",
         "match": {
           "firstName": [
@@ -49,10 +56,8 @@
     ]
   },
   {
-    "_id": 3,
     "invitees": [
       {
-        "_id": 3,
         "fullName": "Frank-John Smith",
         "match": {
           "firstName": [

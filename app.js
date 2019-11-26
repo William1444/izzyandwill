@@ -11,6 +11,7 @@ const indexRouter = require('./routes/index');
 const roomsRouter = require('./routes/room');
 const rsvpRouter = require('./routes/rsvp');
 const userRouter = require('./routes/user');
+const inviteeRouter = require('./routes/invitee');
 const locals = require('./middleware/locals');
 
 const app = express();
@@ -58,6 +59,7 @@ app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/room', roomsRouter);
 app.use('/rsvp', rsvpRouter);
+app.use('/invitee', inviteeRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
