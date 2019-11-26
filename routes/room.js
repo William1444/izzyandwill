@@ -45,7 +45,7 @@ router.post('/admin/:id', ensureAuthenticated, ensureAdmin, function (req, res, 
   };
   console.info(updatedRoom);
   Room.updateOne({_id: req.params.id}, updatedRoom)
-    .then(() => res.redirect(`/room/admin?key=${key}`))
+    .then(() => res.redirect(`/room/admin`))
     .catch(err => next(err))
 });
 

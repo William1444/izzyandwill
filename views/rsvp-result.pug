@@ -5,14 +5,13 @@ block variables
 block content
   script(type='text/javascript' src='/javascript/rsvp.js')
   .sqs-layout.sqs-grid-12.columns-12.sqs-frontend-overlay-editor-widget-host(data-type='page' style='')
-    if errorEmailExists
+    if errorInviteeExists
       h2 UH OH!
       p
-        .error This email has already sent an RSVP.
-        | If you've already submitted  the RSVP but would like to let us know of any changes such as: you are now no longer able to make it, or you would like to book a room then please email
+        .error We have already received a response to this invite.
+        | If you've already submitted the RSVP but would like to let us know of any changes or this doesn't seem right then please email
         a(href=`mailto:${fromEmail}`)=` ${fromEmail}`
         | .
-        <br> Otherwise please use a different email address.
     else if success
       h2 Thank you for your RSVP!
       if hasSelectedRoom
@@ -32,31 +31,3 @@ block content
           | .
       else
         p We are really sorry to here that you are not able to join us, but understand that not everyone will be able to attend our day.
-
-  //block content
-  //  .main.container
-  //    .row
-  //      .col-md-6.col-md-offset-3
-  //        // register form
-  //        form#rsvp(method='POST' action=`/rsvp?key=${key}`)
-  //          div.form-group
-  //            label(for='email') Email Address:
-  //            input#email.form-control(type='email', placeholder='name@email.com' name='email' required=true)
-  //          div.form-group
-  //            label(for='firstName') First Name:
-  //            input#firstName.form-control(type='text', placeholder='first' name='firstName' required=true)
-  //          div.form-group
-  //            label(for='lastName') Last Name:
-  //            input#lastName.form-control(type='text', placeholder='last' name='lastName' required=true)
-  //          div.form-group
-  //            label(for='attending') Are you attending?:
-  //            input#attending.form-control(type='checkbox', name='attending' checked=true)
-  //          div.form-group
-  //            label(for='otherGuests') Who else is coming with you?:
-  //            input#otherGuests.form-control(type='text', placeholder='...' name='otherGuests' required=true)
-  //          div.form-group
-  //            label(for='room') Room preference?:
-  //            select#room(name='roomList' form='rsvp')
-  //              each room in rooms
-  //                option(value=`${room._id}`)=room.room
-  //          button.btn.btn-primary(type='submit') Update

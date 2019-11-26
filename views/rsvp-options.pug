@@ -20,7 +20,7 @@ block content
           .sqs-block-content
             .form-wrapper
               .form-inner-wrapper
-                form#rsvp(autocomplete='on' method='POST' action=`/rsvp?key=${key}`)
+                form#rsvp(autocomplete='on' method='POST')
                   .field-list.clear
                     h3 Contact details
                     #email.form-item.field.email.required
@@ -35,10 +35,10 @@ block content
                         div.title(for='meal-field')
                           | #{attendee.value}
                           span.required *
-                        input.form-radio(id=`meal-vegetarian${attendee.key}` onclick=`mealMeat(this)` type='radio' name=attendee.key value=`Meat` checked=attending === 'Meat')
+                        input.form-radio(id=`meat-${attendee.key}` onclick=`mealMeat(this)` type='radio' name=attendee.key value=`Meat` checked=attending === 'Meat')
                         label(for=`meal-vegetarian${index}`) Red Meat
                         <br>
-                        input.form-radio(id=`attending-no-${attendee.key}` onclick=`mealVeg(this)` type='radio' name=attendee.key value=`Vegetarian` checked=attending === 'Vegetarian')
+                        input.form-radio(id=`veg-${attendee.key}` onclick=`mealVeg(this)` type='radio' name=attendee.key value=`Vegetarian` checked=attending === 'Vegetarian')
                         label(for=`attending-no-${index}`) Vegetarian
                     h3 Accommodation
                     #room.form-item.field.select.required

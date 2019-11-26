@@ -11,7 +11,7 @@ const {ensureAuthenticated, ensureAdmin} = require('./../config/auth');
 const NA_ROOM_ID = -1;
 const ERROR_ROOM_ALREADY_ASSIGNED = 'ROOM_ALREADY_ASSIGNED';
 const VALID_RSVP_QUERY_PARAMS = ['roomId', 'firstName', 'lastName', 'attending', 'otherGuests', 'errorEmailExists', 'message', 'success', 'hasSelectedRoom'];
-const USER_ERRORS = ['USER_EMAIL_EXISTS', 'USER_NO_MATCH', 'USER_TOO_MANY_MATCHES'];
+const USER_ERRORS = ['USER_EMAIL_EXISTS', 'USER_NO_MATCH', 'USER_TOO_MANY_MATCHES', 'USER_INVITEE_EXISTS'];
 
 function isRoomAssigned(room) {
   return room.paid || (room.assignee && room.assignee.length > 1);
@@ -63,9 +63,10 @@ router.post('/', ensureAuthenticated, function (req, res, next) {
       res.render('rsvp-invitee', locals);
       throw new Error(sysErrorMessage);
     })
+    .then(() => ensureRsvpDoesNotExist(inviteeId, res))
     .then(() => res.redirect(`/rsvp/attending/${inviteeId}`))
     .catch(e => {
-      if (e.message !== 'USER_EMAIL_EXISTS' && e.message !== 'USER_NO_MATCH' && e.message !== 'USER_TOO_MANY_MATCHES') {
+      if (USER_ERRORS.indexOf(e.message) < 0) {
         console.error(e.message);
         res.send(e.message);
       }
@@ -99,21 +100,42 @@ router.get('/attending/:inviteeId', ensureAuthenticated, function (req, res, nex
 router.post('/attending/:inviteeId', ensureAuthenticated, function (req, res, next) {
   const body = req.body;
   const attendingMap = Object.keys(body)
-    .filter(key => /^attending-[0-9]+$/.test(key))
+    .filter(key => /^attending-[a-f\d]{24}$/.test(key))
     .map(key => key.replace(/attending-/, ''))
     .reduce((accum, key) => {
-      accum[Number(key)] = body[`attending-${key}`];
+      accum[key] = body[`attending-${key}`];
       return accum;
     }, {});
   res.redirect(url.format({query: attendingMap, pathname: `/rsvp/options/${req.params.inviteeId}`}));
 });
 
-router.get('/options/:inviteeId', ensureAuthenticated, function (req, res, next) {
-  Invitee.findById({_id: req.params.inviteeId})
+/**
+ *
+ * @param req
+ * @param attendingMap
+ * @returns {Promise<[attendees, absentees]>}
+ */
+function getAttendees(inviteeId, attendingMap) {
+  return Invitee.findById({_id: inviteeId})
     .then(invitee => {
-      const attendees = invitee.invitees.map(invitee => ({_id: invitee._id, fullName: invitee.fullName, isAttending: req.query[invitee._id].toLowerCase() === 'yes'}));
-      res.render('rsvp-options', {attendees: attendees.filter(a => a.isAttending).map(a => ({key: `attending-${a._id}`, value: a.fullName})), absentees: attendees.filter(a => !a.isAttending)})
+      const invitees = invitee.invitees.map(invitee => ({
+        _id: invitee._id,
+        fullName: invitee.fullName,
+        firstName: invitee.match.firstName[0],
+        isAttending: attendingMap[invitee._id].toLowerCase() === 'yes'
+      }));
+      const attendees = invitees.filter(a => a.isAttending);
+      const absentees = invitees.filter(a => !a.isAttending);
+      return [attendees, absentees];
     });
+}
+
+router.get('/options/:inviteeId', ensureAuthenticated, function (req, res, next) {
+  getAttendees(req.params.inviteeId, req.query)
+    .then(([attendees, absentees]) => res.render('rsvp-options', {
+      attendees: attendees.map(a => ({key: `meal-${a._id}`, value: a.fullName})),
+      absentees
+    }));
 });
 
 router.get('/email', ensureAuthenticated, function (req, res, next) {
@@ -161,66 +183,70 @@ function assignRoom(id, email) {
       .then(() => room)
 }
 
-// router.post('/', ensureAuthenticated, function (req, res, next) {
-//   console.info(req.body);
-//   const body = req.body;
-//   const email = body.email;
-//   const firstName = body.firstName;
-//   const lastName = body.lastName;
-//   const attending = body.attending === 'Yes';
-//   const roomId = attending && Number(body.roomId);
-//   const otherGuests = !attending && 'na' || body.otherGuests;
-//   const message = body.message;
-//   let room;
-//   let hasSelectedRoom = roomId && roomId !== NA_ROOM_ID;
-//   Rsvp.findOne({email})
-//     .then(rsvp => {
-//       if (rsvp) {
-//         res.render('rsvp-result', {
-//           roomId,
-//           firstName,
-//           lastName,
-//           attending,
-//           otherGuests,
-//           errorEmailExists: true,
-//           message
-//         });
-//         throw new Error('USER_EMAIL_EXISTS');
-//       }
-//     })
-//     .then(() => attending && assignRoom(roomId, email))
-//     .then(r => room = r)
-//     .catch(e => {
-//       if (e.message === ERROR_ROOM_ALREADY_ASSIGNED) {
-//         res.render('rsvp-result', {room, error: {roomTaken: true}});
-//         throw new Error('USER_ROOM_TAKEN');
-//       } else {
-//         throw e;
-//       }
-//     })
-//     .then(() => Rsvp.init())
-//     .then(() => Rsvp.create({
-//       email,
-//       firstName: firstName,
-//       lastName: lastName,
-//       attending,
-//       otherGuests: otherGuests,
-//       message,
-//       roomId
-//     }))
-//     .then(() => isTest
-//       ? rsvpReply.html({to: email, firstName, lastName, otherGuests, room, attending})
-//       : rsvpReply.email({to: email, firstName, lastName, otherGuests, room, attending}))
-//     .then(r => isTest
-//       ? res.send(r)
-//       : res.render('rsvp-result', {success: true, hasSelectedRoom, attending}))
-//     .catch(e => {
-//       if (e.message !== 'USER_ROOM_TAKEN' && e.message !== 'USER_EMAIL_EXISTS') {
-//         res.send(e.message);
-//       }
-//       ;
-//     });
-// });
+function ensureRsvpDoesNotExist(inviteeId, res) {
+  return Rsvp.findOne({inviteeId})
+    .then(rsvp => {
+      if (rsvp) {
+        // tbd
+        res.render('rsvp-result', Object.assign(rsvp, {errorInviteeExists: true}));
+        throw new Error('USER_INVITEE_EXISTS');
+      }
+    });
+}
+
+router.post('/options/:inviteeId', ensureAuthenticated, function (req, res, next) {
+  const attendeesMap = req.query;
+  const body = req.body;
+  const email = body.email;
+  const roomId = Number(body.roomId);
+  const message = body.message;
+  const inviteeId = req.params.inviteeId;
+  let invitees;
+  const foodMap = Object.keys(body)
+    .filter(key => /^meal-[a-f\d]{24}$/.test(key))
+    .map(key => key.replace(/meal-/, ''))
+    .reduce((accum, key) => {
+      accum[key] = body[`meal-${key}`];
+      return accum;
+    }, {});
+  let hasSelectedRoom = roomId && roomId !== NA_ROOM_ID;
+  ensureRsvpDoesNotExist(inviteeId, res)
+    .then(() => assignRoom(roomId, email))
+    .then(r => room = r)
+    .catch(e => {
+      if (e.message === ERROR_ROOM_ALREADY_ASSIGNED) {
+        res.render('rsvp-result', {room, error: {roomTaken: true}});
+        throw new Error('USER_ROOM_TAKEN');
+      } else {
+        throw e;
+      }
+    })
+    .then(() => Rsvp.init())
+    .then(() => getAttendees(inviteeId, attendeesMap))
+    .then(([attendees, absentees]) => {
+      invitees = attendees.concat(absentees);
+      return Rsvp.create({
+        email,
+        attendees: attendees.map(attendee => Object.assign(attendee, {foodChoice: foodMap[attendee._id]})),
+        absentees,
+        allInvitees: invitees.map(i => i.fullName).join(', '),
+        message,
+        roomId,
+        inviteeId
+      });
+    })
+    .then(rsvp => isTest
+      ? rsvpReply.html({invitees, attendees: rsvp.attendees, room, absentees: rsvp.absentees})
+      : rsvpReply.email({to: rsvp.email, attendees: rsvp.attendees, room}))
+    .then(r => isTest
+      ? res.send(r)
+      : res.render('rsvp-result', {success: true, hasSelectedRoom, attending: invitees.length > 0}))
+    .catch(e => {
+      if (e.message !== 'USER_ROOM_TAKEN' && e.message !== 'USER_EMAIL_EXISTS') {
+        res.send(e.message);
+      }
+    });
+});
 
 router.get('/test', ensureAuthenticated, ensureAdmin, function (req, res, next) {
   rsvpReply.email({

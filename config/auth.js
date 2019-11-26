@@ -8,7 +8,7 @@ module.exports = {
     res.redirect('/user/login');
   },
   ensureAdmin: function(req, res, next) {
-    if (req.user.admin || isTest) {
+    if (req.isAuthenticated() && req.user.admin || isTest) {
       return next();
     } else {
       req.flash('error_msg', 'Please log in as admin to view that resource');

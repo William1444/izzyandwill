@@ -7,7 +7,7 @@ module.exports = {
   sendgridApiKey: process.env.SENDGRID_API_KEY || loadDefaultSendGridKeyFromFile(),
   fromEmail: process.env.FROM_EMAIL || 'example.email@gmail.com',
   fromTel: process.env.FROM_TEL || '07123123123',
-  siteUrl: 'https://izzyandwill.herokuapp.com',
+  siteUrl: 'https://www.izzyandwill.co.uk',
   userPassword: process.env.USER_PASSWORD || 'password',
   adminPassword: process.env.ADMIN_PASSWORD || 'admin',
   sortCode: process.env.SORT_CODE || '00-00-00',

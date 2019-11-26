@@ -10,7 +10,7 @@ html
             h1.display-4.m-b-2= room.room
             p= `price: ${room.price}`
             // register form
-            form(method='POST' action=`/room/admin/${room._id}?key=${key}`)
+            form(method='POST' action=`/room/admin/${room._id}`)
               div.form-group
                 label(for='assignee') Assignee:
                 input#assignee.form-control(type='email', placeholder='name@email.com' name='assignee' value=room.assignee)
