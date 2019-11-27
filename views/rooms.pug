@@ -1,3 +1,5 @@
+doctype html
+include _head
 html
   head
     title= title
@@ -8,11 +10,13 @@ html
         th Price
         th Assignee
         th Paid
+        th Available
       each room in rooms
-          tr
+          tr(class=`room ${room.isAvailable ? 'available' : 'unavailable'} ${room.isAssigned ? 'assigned' : 'unassigned'} ${room.isPaid ? 'paid' : 'not-paid'} ${room.isAssignedNotPaid ? 'assigned-not-paid': ''}`)
             td #{room.room}
             td #{room.price}
             td #{room.assignee}
-            td #{room.paid}
+            td.paid-indicator #{room.isPaidText}
+            td.availability #{room.isAvailableText}
             td
               a(href=`/room/admin/${room._id}`) update

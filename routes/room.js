@@ -13,7 +13,16 @@ router.get('/', ensureAuthenticated, function (req, res, next) {
 /* GET rooms admin */
 router.get('/admin', ensureAuthenticated, ensureAdmin, function (req, res, next) {
   Room.find({})
-    .then(rooms => res.render('rooms', {rooms, key: req.query.key}))
+    .then(rooms => res.render('rooms', {
+      rooms: rooms.map(r => Object.assign(r, {
+        isAvailableText: !(r.paid || r.assignee) ? 'Yes' : 'No',
+        isAvailable: !(r.paid || r.assignee),
+        isPaidText: !!r.paid ? 'Yes' : 'No',
+        isAssigned: !!r.assignee,
+        isPaid: !!r.paid,
+        isAssignedNotPaid: r.assignee && !r.paid
+      }))
+    }))
     .catch(err => next(err))
 });
 
@@ -27,8 +36,7 @@ router.get('/admin/:id', ensureAuthenticated, ensureAdmin, function (req, res, n
         return next(error)
       } else {
         res.render('room-admin', {
-          room,
-          key: req.query.key
+          room
         })
       }
     })

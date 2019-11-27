@@ -189,3 +189,21 @@ form.disabled {
 .leadBooker td {
     font-weight: bold
 }
+
+/* room admin */
+
+.available .availability {
+    background-color: #deeee0;
+}
+
+.unavailable .availability {
+    background-color: #ebd3d2;
+}
+
+.room.assigned-not-paid .paid-indicator {
+    background-color: #ebd3d2;
+}
+
+.room.paid .paid-indicator {
+    background-color: #deeee0;
+}
