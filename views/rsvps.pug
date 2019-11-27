@@ -1,3 +1,5 @@
+doctype html
+include _head
 html
   head
     title= title
@@ -5,18 +7,20 @@ html
     table(style='width:100%', border='1')
       tr
         th Email
-        th First Name
-        th Last Name
+        th Full Names
         th Attending
-        th Other Guests
         th Room
+        th Room paid
+        th Room price
         th Message
-      each rsvp in rsvps
-        tr
-          td #{rsvp.email}
-          td #{rsvp.firstName}
-          td #{rsvp.lastName}
-          td #{rsvp.attending}
-          td #{rsvp.otherGuests}
-          td #{rsvp.room}
-          td #{rsvp.message}
+        th Time
+      each invitee in invitees
+        tr(class=`together ${invitee.togetherSwitch} ${invitee.leadBooker && 'leadBooker'}`)
+          td #{invitee.email}
+          td #{invitee.fullName}
+          td #{invitee.isAttending}
+          td #{invitee.room}
+          td #{invitee.roomPaid}
+          td #{invitee.roomPrice}
+          td #{invitee.message}
+          td #{invitee.time}

@@ -67,7 +67,7 @@ call Izzy on <a href="tel:${fromTel}"></a>${fromTel}</p>`;
 <p>To secure the room, please transfer £${room.price} to the following account:</p>
 <p style="padding-left=20px">Sort Code: ${sortCode}</p>
 <p style="padding-left=20px">Account Number: ${accountNumber}</p>
-<p style="padding-left=20px">Reference: ${room.room}</p>` || '';
+<p style="padding-left=20px">Reference: OL ${room.room}</p>` || '';
 
   const attendeesRsvpDetails = attendees.map(a => `
   <tr>

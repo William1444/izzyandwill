@@ -6,167 +6,15 @@ const Rsvp = require('./../models/rsvp');
 const Invitee = require('./../models/invitee');
 const Room = require('./../models/room');
 const rsvpReply = require('./../services/rsvp-reply');
-const {isTest, fromEmail, fromTel} = require('./../config');
+const {isTest} = require('./../config');
 const {ensureAuthenticated, ensureAdmin} = require('./../config/auth');
 const NA_ROOM_ID = -1;
 const ERROR_ROOM_ALREADY_ASSIGNED = 'ROOM_ALREADY_ASSIGNED';
-const VALID_RSVP_QUERY_PARAMS = ['roomId', 'firstName', 'lastName', 'attending', 'otherGuests', 'errorEmailExists', 'message', 'success', 'hasSelectedRoom'];
 const USER_ERRORS = ['USER_EMAIL_EXISTS', 'USER_NO_MATCH', 'USER_TOO_MANY_MATCHES', 'USER_INVITEE_EXISTS'];
 
 function isRoomAssigned(room) {
   return room.paid || (room.assignee && room.assignee.length > 1);
 }
-
-function getValidQueryParamsForModel(req) {
-  const query = req.query;
-  return Object.keys(query)
-    .filter(key => VALID_RSVP_QUERY_PARAMS.includes(key))
-    .reduce((obj, key) => {
-      if (query[key] === 'false') {
-        obj[key] = false
-      } else if (query[key] === 'true') {
-        obj[key] = true
-      } else {
-        obj[key] = query[key];
-      }
-      return obj;
-    }, {});
-}
-
-/* GET rsvp invitee */
-router.get('/', ensureAuthenticated, function (req, res, next) {
-  res.render('rsvp-invitee');
-});
-
-router.post('/', ensureAuthenticated, function (req, res, next) {
-  const body = req.body;
-  const firstName = body.firstName;
-  const lastName = body.lastName;
-  let inviteeFullNames, inviteeId;
-  Invitee.find({'invitees.match.firstName': firstName.toLowerCase(), 'invitees.match.lastName': lastName.toLowerCase()})
-    .then(invitees => {
-      let sysErrorMessage, tooManyMatch = false, noMatch = false;
-      if (invitees.length === 1) {
-        inviteeFullNames = invitees[0].invitees.map(i => i.fullName);
-        inviteeId = invitees[0]._id;
-        return;
-      } else if (invitees.length > 1) {
-        sysErrorMessage = 'USER_TOO_MANY_MATCHES';
-        tooManyMatch = true;
-      } else if (invitees.length === 0) {
-        sysErrorMessage = 'USER_NO_MATCH';
-        noMatch = true;
-      } else {
-        throw new Error(`Issue finding ${firstName} and ${lastName}`);
-      }
-      let locals = {tooManyMatch, noMatch, firstName, lastName};
-      res.render('rsvp-invitee', locals);
-      throw new Error(sysErrorMessage);
-    })
-    .then(() => ensureRsvpDoesNotExist(inviteeId, res))
-    .then(() => res.redirect(`/rsvp/attending/${inviteeId}`))
-    .catch(e => {
-      if (USER_ERRORS.indexOf(e.message) < 0) {
-        console.error(e.message);
-        res.send(e.message);
-      }
-    });
-});
-
-router.get('/attending/:inviteeId', ensureAuthenticated, function (req, res, next) {
-  const inviteeId = req.params.inviteeId;
-  let invitee;
-  Invitee.findById({_id: inviteeId})
-    .then(result => {
-      if (!result) {
-        throw new Error("NotFound")
-      }
-      invitee = result;
-    })
-    .then(() => Rsvp.findOne({inviteeId: inviteeId}))
-    .then(rsvp => {
-      res.render('rsvp-attending', {
-        invitees: invitee.invitees.map(i => ({key: `attending-${i._id}`, value: i.fullName})),
-        rsvp
-      })
-    })
-    .catch(e => {
-      if (USER_ERRORS.indexOf(e.message) < 0) {
-        res.send(e.message);
-      }
-    });
-});
-
-router.post('/attending/:inviteeId', ensureAuthenticated, function (req, res, next) {
-  const body = req.body;
-  const attendingMap = Object.keys(body)
-    .filter(key => /^attending-[a-f\d]{24}$/.test(key))
-    .map(key => key.replace(/attending-/, ''))
-    .reduce((accum, key) => {
-      accum[key] = body[`attending-${key}`];
-      return accum;
-    }, {});
-  res.redirect(url.format({query: attendingMap, pathname: `/rsvp/options/${req.params.inviteeId}`}));
-});
-
-/**
- *
- * @param req
- * @param attendingMap
- * @returns {Promise<[attendees, absentees]>}
- */
-function getAttendees(inviteeId, attendingMap) {
-  return Invitee.findById({_id: inviteeId})
-    .then(invitee => {
-      const invitees = invitee.invitees.map(invitee => ({
-        _id: invitee._id,
-        fullName: invitee.fullName,
-        firstName: invitee.match.firstName[0],
-        isAttending: attendingMap[invitee._id].toLowerCase() === 'yes'
-      }));
-      const attendees = invitees.filter(a => a.isAttending);
-      const absentees = invitees.filter(a => !a.isAttending);
-      return [attendees, absentees];
-    });
-}
-
-router.get('/options/:inviteeId', ensureAuthenticated, function (req, res, next) {
-  getAttendees(req.params.inviteeId, req.query)
-    .then(([attendees, absentees]) => res.render('rsvp-options', {
-      attendees: attendees.map(a => ({key: `meal-${a._id}`, value: a.fullName})),
-      absentees
-    }));
-});
-
-router.get('/email', ensureAuthenticated, function (req, res, next) {
-  res.render('rsvp-invitee');
-});
-
-/* GET rsvp */
-// router.get('/', ensureAuthenticated, function (req, res, next) {
-//   Room.find({})
-//     .then(rooms => {
-//       let unassignedRooms = rooms
-//         .filter(r => !isRoomAssigned(r))
-//         .sort((a, b) => a.room > b.room ? 1 : -1);
-//       res.render('rsvp', Object.assign({
-//         rooms: [{room: 'NA', _id: NA_ROOM_ID}].concat(unassignedRooms)
-//       }, getValidQueryParamsForModel(req)))
-//     })
-//     .catch(err => next(err))
-// });
-
-router.get('/rsvps', ensureAuthenticated, ensureAdmin, function (req, res, next) {
-  Rsvp.find({})
-    .then(rsvps => Promise.all(rsvps
-      .map(rsvp => Room.findOne({_id: rsvp.roomId})
-        .then(room =>
-          Object.assign(rsvp, {room: room && room.room || 'NA'})
-        )
-      )))
-    .then(rsvps => res.render('rsvps', {rsvps}))
-    .catch(e => next(e));
-});
 
 function assignRoom(id, email) {
   let room;
@@ -194,16 +42,140 @@ function ensureRsvpDoesNotExist(inviteeId, res) {
     });
 }
 
-router.post('/options/:inviteeId', ensureAuthenticated, function (req, res, next) {
+/**
+ *
+ * @param req
+ * @param attendingMap
+ * @returns {Promise<[attendees, absentees]>}
+ */
+function getAttendees(inviteeId, attendingMap) {
+  return Invitee.findById({_id: inviteeId})
+    .then(invitee => {
+      const invitees = invitee.invitees.map(invitee => ({
+        _id: invitee._id,
+        fullName: invitee.fullName,
+        firstName: invitee.match.firstName[0],
+        isAttending: attendingMap[invitee._id].toLowerCase() === 'yes'
+      }));
+      const attendees = invitees.filter(a => a.isAttending);
+      const absentees = invitees.filter(a => !a.isAttending);
+      return [attendees, absentees];
+    });
+}
+
+function getLeadBookerId(invitee, firstName, lastName) {
+  let leadBooker = invitee.invitees.find(i => {
+    const firstNameMatch = i.match.firstName.find(f => firstName.toLowerCase() === f);
+    const lastNameMatch = i.match.lastName.find(l => lastName.toLowerCase() === l);
+    return firstNameMatch && firstNameMatch.length > 0 && lastNameMatch && lastNameMatch.length > 0
+  });
+  return leadBooker && leadBooker._id;
+}
+
+/* GET rsvp invitee */
+router.get('/', ensureAuthenticated, function (req, res, next) {
+  res.render('rsvp-invitee');
+});
+
+/* POST rsvp */
+router.post('/', ensureAuthenticated, function (req, res, next) {
+  const body = req.body;
+  const firstName = body.firstName;
+  const lastName = body.lastName;
+  let inviteeFullNames, inviteeId, leadBookerInviteeId;
+  Invitee.find({'invitees.match.firstName': firstName.toLowerCase(), 'invitees.match.lastName': lastName.toLowerCase()})
+    .then(invitees => {
+      let sysErrorMessage, tooManyMatch = false, noMatch = false;
+      if (invitees.length === 1) {
+        inviteeFullNames = invitees[0].invitees.map(i => i.fullName);
+        inviteeId = invitees[0]._id;
+        leadBookerInviteeId = getLeadBookerId(invitees[0], firstName, lastName);
+        return;
+      } else if (invitees.length > 1) {
+        sysErrorMessage = 'USER_TOO_MANY_MATCHES';
+        tooManyMatch = true;
+      } else if (invitees.length === 0) {
+        sysErrorMessage = 'USER_NO_MATCH';
+        noMatch = true;
+      } else {
+        throw new Error(`Issue finding ${firstName} and ${lastName}`);
+      }
+      let locals = {tooManyMatch, noMatch, firstName, lastName};
+      res.render('rsvp-invitee', locals);
+      throw new Error(sysErrorMessage);
+    })
+    .then(() => ensureRsvpDoesNotExist(inviteeId, res))
+    .then(() => res.redirect(`/rsvp/attending/${inviteeId}/${leadBookerInviteeId}`))
+    .catch(e => {
+      if (USER_ERRORS.indexOf(e.message) < 0) {
+        console.error(e.message);
+        res.send(e.message);
+      }
+    });
+});
+
+router.get('/attending/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, function (req, res, next) {
+  const inviteeId = req.params.inviteeId;
+  let invitee;
+  Invitee.findById({_id: inviteeId})
+    .then(result => {
+      if (!result) {
+        throw new Error("NotFound")
+      }
+      invitee = result;
+    })
+    .then(() => Rsvp.findOne({inviteeId: inviteeId}))
+    .then(rsvp => {
+      res.render('rsvp-attending', {
+        invitees: invitee.invitees.map(i => ({key: `attending-${i._id}`, value: i.fullName})),
+        rsvp
+      })
+    })
+    .catch(e => {
+      if (USER_ERRORS.indexOf(e.message) < 0) {
+        res.send(e.message);
+      }
+    });
+});
+
+router.post('/attending/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, function (req, res, next) {
+  const body = req.body;
+  const attendingMap = Object.keys(body)
+    .filter(key => /^attending-[a-f\d]{32}$/.test(key))
+    .map(key => key.replace(/attending-/, ''))
+    .reduce((accum, key) => {
+      accum[key] = body[`attending-${key}`];
+      return accum;
+    }, {});
+  res.redirect(url.format({
+    query: attendingMap,
+    pathname: `/rsvp/options/${req.params.inviteeId}/${req.params.leadBookerInviteeId}`
+  }));
+});
+
+router.get('/options/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, function (req, res, next) {
+  getAttendees(req.params.inviteeId, req.query)
+    .then(([attendees, absentees]) => res.render('rsvp-options', {
+      attendees: attendees.map(a => ({key: `meal-${a._id}`, value: a.fullName})),
+      absentees
+    }));
+});
+
+// router.get('/email', ensureAuthenticated, function (req, res, next) {
+//   res.render('rsvp-invitee');
+// });
+
+router.post('/options/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, function (req, res, next) {
   const attendeesMap = req.query;
   const body = req.body;
   const email = body.email;
   const roomId = Number(body.roomId);
   const message = body.message;
   const inviteeId = req.params.inviteeId;
+  const leadBookerInviteeId = req.params.leadBookerInviteeId;
   let invitees;
   const foodMap = Object.keys(body)
-    .filter(key => /^meal-[a-f\d]{24}$/.test(key))
+    .filter(key => /^meal-[a-f\d]{32}$/.test(key))
     .map(key => key.replace(/meal-/, ''))
     .reduce((accum, key) => {
       accum[key] = body[`meal-${key}`];
@@ -227,8 +199,13 @@ router.post('/options/:inviteeId', ensureAuthenticated, function (req, res, next
       invitees = attendees.concat(absentees);
       return Rsvp.create({
         email,
-        attendees: attendees.map(attendee => Object.assign(attendee, {foodChoice: foodMap[attendee._id]})),
-        absentees,
+        attendees: attendees.map(attendee => Object.assign(attendee, {
+          foodChoice: foodMap[attendee._id],
+          leadBooker: attendee._id === leadBookerInviteeId
+        })),
+        absentees: absentees.map(absentee => Object.assign(absentee, {
+          leadBooker: absentee._id === leadBookerInviteeId
+        })),
         allInvitees: invitees.map(i => i.fullName).join(', '),
         message,
         roomId,
@@ -246,6 +223,43 @@ router.post('/options/:inviteeId', ensureAuthenticated, function (req, res, next
         res.send(e.message);
       }
     });
+});
+
+router.get('/rsvps', ensureAuthenticated, ensureAdmin, function (req, res, next) {
+  Promise.all([Rsvp.find({}), Room.find({})])
+    .then(([rsvps, rooms]) =>
+      rsvps
+        .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+        .reduce((accum, rsvp, i) => {
+          const room = rooms.find(r => r._id === rsvp.roomId);
+          const absentees = rsvp.absentees.map(absentee => Object.assign(absentee, {
+            isAttending: 'No',
+            foodChoice: 'NA',
+            email: rsvp.email,
+            togetherSwitch: i % 2 === 0 ? 'a' : 'b',
+            roomPaid: 'NA',
+            roomPrice: 'NA',
+            room: 'NA',
+            message: rsvp.message,
+            time: rsvp.time
+          }));
+          const attendees = rsvp.attendees.map(attendee => Object.assign(attendee, {
+            isAttending: 'Yes',
+            email: rsvp.email,
+            togetherSwitch: i % 2 === 0 ? 'a' : 'b',
+            room: room.room,
+            roomPaid: room.paid,
+            roomPrice: room.price,
+            message: rsvp.message,
+            time: rsvp.time
+          }));
+          const sortedInvitees = absentees.concat(attendees)
+            .sort((a, b) => b.isAttending === 'Yes'? 1 : 0)
+            .sort((a, b) => b.leadBooker ? 1 : 0);
+          return accum.concat(sortedInvitees);
+        }, []))
+    .then(invitees => res.render('rsvps', {invitees}))
+    .catch(e => next(e));
 });
 
 router.get('/test', ensureAuthenticated, ensureAdmin, function (req, res, next) {

@@ -33,6 +33,7 @@ block content
                         <br>
                         input.form-radio(id=`attending-no-${invitee.key}` onclick="toggleRequiredOption()" type='radio' name=invitee.key value=`No` checked=attending === 'No')
                         label(for=`attending-no-${index}`) No
+                  input.hidden(id=`lead-booker-id` name=leadBookerInviteeId value=leadBookerInviteeId)
                   .form-button-wrapper.form-button-wrapper--align-center
                     input.button.sqs-system-button.sqs-editable-button(type='submit' value='RSVP')
                   .hidden.form-submission-text Thank you!

@@ -4,17 +4,20 @@ module.exports = mongoose.model('Rsvp', new mongoose.Schema({
   email: {type: String, required: true},
   attendees: [{
     _id: {type: String, require: true},
+    leadBooker: {type: Boolean, default: false, required: true},
     firstName: String,
     fullName: String,
     foodChoice: String,
   }],
   absentees: [{
     _id: {type: String, require: true},
+    leadBooker: {type: Boolean, default: false, required: true},
     firstName: String,
     fullName: {type: String, require: true}
   }],
   allInvitees: String,
   roomId: Number,
-  message: String
+  message: String,
+  time: {type: String, default: new Date().toISOString(), required: true}
 }));
 

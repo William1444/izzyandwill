@@ -3,6 +3,7 @@ const router = express.Router();
 const {ensureAdmin} = require('./../config/auth');
 const Invitee = require('./../models/invitee');
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 router.get('/', ensureAdmin, function (req, res) {
   Invitee.find({})
@@ -10,14 +11,14 @@ router.get('/', ensureAdmin, function (req, res) {
 });
 
 function addIdToInvitee(invitee) {
-  const thing = Object.assign(invitee, {
-    _id: mongoose.Types.ObjectId(),
-    invitees: invitee.invitees.map(i => Object.assign(i, {
-      _id: mongoose.Types.ObjectId()
-    }))
+  invitee._id = mongoose.Types.ObjectId();
+  invitee.invitees = invitee.invitees.map(i => {
+    i._id = crypto.randomBytes(16).toString("hex");
+    i.match.lastName = i.match.lastName.map(name => name.toLowerCase());
+    i.match.firstName = i.match.firstName.map(name => name.toLowerCase());
+    return i;
   });
-  console.info(thing)
-  return thing
+  return invitee;
 }
 
 function addIdToInvitees(invitees) {
@@ -28,7 +29,7 @@ router.post('/bulk', ensureAdmin, function (req, res) {
   Invitee.find({})
     .then(i => {
       if (i && i.length > 0) {
-        res.send('invitee db already has content. Use /invitee api instead')
+        res.status(400).send('invitee db already has content. Use /invitee api instead');
         throw new Error('USER_INVITEE_NOT_EMPTY');
       }
     })
@@ -40,7 +41,7 @@ router.post('/bulk', ensureAdmin, function (req, res) {
     .then(() => res.send("SUCCESS"))
     .catch(e => {
       if ('USER_INVITEE_NOT_EMPTY' !== e.message) {
-        res.send(e);
+        res.status(500).send(e.message);
       }
     });
 });
