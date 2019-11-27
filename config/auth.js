@@ -1,4 +1,4 @@
-const isTest = require('./index');
+const { isTest } = require('./index');
 module.exports = {
   ensureAuthenticated: function (req, res, next) {
     if (req.isAuthenticated() || isTest) {

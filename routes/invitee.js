@@ -11,7 +11,6 @@ router.get('/', ensureAdmin, function (req, res) {
 });
 
 function addIdToInvitee(invitee) {
-  invitee._id = mongoose.Types.ObjectId();
   invitee.invitees = invitee.invitees.map(i => {
     i._id = crypto.randomBytes(16).toString("hex");
     i.match.lastName = i.match.lastName.map(name => name.toLowerCase());

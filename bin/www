@@ -26,7 +26,7 @@ const server = http.createServer(app);
 /**
  * Connect to mongo
  */
-mongoose.connect(`${mongoUrl}`, {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(`${mongoUrl}`, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true})
 ;
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'mongo connection error:'));

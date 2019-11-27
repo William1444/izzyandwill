@@ -88,7 +88,7 @@ router.post('/', ensureAuthenticated, function (req, res, next) {
       let sysErrorMessage, tooManyMatch = false, noMatch = false;
       if (invitees.length === 1) {
         inviteeFullNames = invitees[0].invitees.map(i => i.fullName);
-        inviteeId = invitees[0]._id;
+        inviteeId = invitees[0].id;
         leadBookerInviteeId = getLeadBookerId(invitees[0], firstName, lastName);
         return;
       } else if (invitees.length > 1) {
