@@ -226,9 +226,11 @@ router.post('/options/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, fun
 });
 
 router.get('/rsvps', ensureAuthenticated, ensureAdmin, function (req, res, next) {
+  let rsvps;
   Promise.all([Rsvp.find({}), Room.find({})])
-    .then(([rsvps, rooms]) =>
-      rsvps
+    .then(([rsvpsResult, rooms]) => {
+      rsvps = rsvpsResult;
+      return rsvps
         .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
         .reduce((accum, rsvp, i) => {
           const room = rooms.find(r => r._id === rsvp.roomId);
@@ -254,11 +256,20 @@ router.get('/rsvps', ensureAuthenticated, ensureAdmin, function (req, res, next)
             time: rsvp.time
           }));
           const sortedInvitees = absentees.concat(attendees)
-            .sort((a, b) => b.isAttending === 'Yes'? 1 : 0)
+            .sort((a, b) => b.isAttending === 'Yes' ? 1 : 0)
             .sort((a, b) => b.leadBooker ? 1 : 0);
           return accum.concat(sortedInvitees);
-        }, []))
-    .then(invitees => res.render('rsvps', {invitees}))
+        }, [])
+    })
+    .then(invitees => res.render('rsvps', {
+      invitees,
+      totals: {
+        repliedYes: invitees.filter(i => i.isAttending === 'Yes').length,
+        repliedNo: invitees.filter(i => i.isAttending === 'No').length,
+        replied: invitees.length,
+        rsvps: rsvps.length
+      }
+    }))
     .catch(e => next(e));
 });
 

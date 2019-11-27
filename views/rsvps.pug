@@ -24,3 +24,20 @@ html
           td #{invitee.roomPrice}
           td #{invitee.message}
           td #{invitee.time}
+    p
+    table(style='width:50%', border='1')
+      tr
+        th Total
+        th Value
+      tr
+        td Rsvps
+        td #{totals.rsvps}
+      tr
+        td Attendees
+        td #{totals.repliedYes}
+      tr
+        td Absentees
+        td #{totals.repliedNo}
+      tr
+        td Guests replied
+        td #{totals.replied}
