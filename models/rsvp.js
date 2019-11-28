@@ -1,7 +1,7 @@
 let mongoose = require('mongoose');
 module.exports = mongoose.model('Rsvp', new mongoose.Schema({
   inviteeId: {type: String, unique: true, required: true},
-  email: {type: String, required: true},
+  email: {type: String},
   attendees: [{
     _id: {type: String, require: true},
     leadBooker: {type: Boolean, default: false, required: true},

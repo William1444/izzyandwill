@@ -185,7 +185,7 @@ function initialiseFormValidation(form) {
 
 function validateForm() {
   if (Object.keys(formErrors).length < 1) {
-    document.getElementById('rsvp').classList.remove('invalid')
+    document.getElementById('rsvp').classList.remove('invalid');
   } else {
     document.getElementById('rsvp').classList.add('invalid')
   }

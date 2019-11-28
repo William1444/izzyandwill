@@ -117,7 +117,8 @@ router.post('/', ensureAuthenticated, function (req, res, next) {
 router.get('/attending/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, function (req, res, next) {
   const inviteeId = req.params.inviteeId;
   let invitee;
-  Invitee.findById({_id: inviteeId})
+  ensureRsvpDoesNotExist(inviteeId, res)
+    .then(() => Invitee.findById({_id: inviteeId}))
     .then(result => {
       if (!result) {
         throw new Error("NotFound")
@@ -140,6 +141,8 @@ router.get('/attending/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, fu
 
 router.post('/attending/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, function (req, res, next) {
   const body = req.body;
+  const inviteeId = req.params.inviteeId;
+  const leadBookerInviteeId = req.params.leadBookerInviteeId;
   const attendingMap = Object.keys(body)
     .filter(key => /^attending-[a-f\d]{32}$/.test(key))
     .map(key => key.replace(/attending-/, ''))
@@ -147,10 +150,15 @@ router.post('/attending/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, f
       accum[key] = body[`attending-${key}`];
       return accum;
     }, {});
-  res.redirect(url.format({
-    query: attendingMap,
-    pathname: `/rsvp/options/${req.params.inviteeId}/${req.params.leadBookerInviteeId}`
-  }));
+  if (Object.keys(attendingMap).some(key => attendingMap[key] === 'Yes')) {
+    res.redirect(url.format({
+      query: attendingMap,
+      pathname: `/rsvp/options/${inviteeId}/${leadBookerInviteeId}`
+    }));
+  } else {
+    createRsvp({inviteeId, attendingMap, leadBookerInviteeId})
+      .then(rsvp => res.render('rsvp-result', {success: true,}));
+  }
 });
 
 router.get('/options/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, function (req, res, next) {
@@ -162,14 +170,14 @@ router.get('/options/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, func
 });
 
 router.post('/options/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, function (req, res, next) {
-  const attendeesMap = req.query;
+  const attendingMap = req.query;
   const body = req.body;
   const email = body.email;
   const roomId = Number(body.roomId);
   const message = body.message;
   const inviteeId = req.params.inviteeId;
   const leadBookerInviteeId = req.params.leadBookerInviteeId;
-  let invitees;
+  let rsvp;
   const foodMap = Object.keys(body)
     .filter(key => /^meal-[a-f\d]{32}$/.test(key))
     .map(key => key.replace(/meal-/, ''))
@@ -189,10 +197,26 @@ router.post('/options/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, fun
         throw e;
       }
     })
-    .then(() => Rsvp.init())
-    .then(() => getAttendees(inviteeId, attendeesMap))
+    .then(() => createRsvp({inviteeId, attendingMap, leadBookerInviteeId, foodMap, message, roomId, email}))
+    .then(rsvpResult => rsvp = rsvpResult)
+    .then(rsvp => isTest
+      ? rsvpReply.html({attendees: rsvp.attendees, absentees: rsvp.absentees, room})
+      : rsvpReply.email({to: rsvp.email, attendees: rsvp.attendees, absentees: rsvp.absentees, room}))
+    .then(r => isTest
+      ? res.send(r)
+      : res.render('rsvp-result', {success: true, hasSelectedRoom, attending: rsvp.attendees.length > 0}))
+    .catch(e => {
+      if (e.message !== 'USER_ROOM_TAKEN' && e.message !== 'USER_EMAIL_EXISTS') {
+        res.send(e.message);
+      }
+    });
+});
+
+function createRsvp({inviteeId, attendingMap, leadBookerInviteeId, foodMap = {}, message = '', roomId = NA_ROOM_ID, email = ''}) {
+  return Rsvp.init()
+    .then(() => getAttendees(inviteeId, attendingMap))
     .then(([attendees, absentees]) => {
-      invitees = attendees.concat(absentees);
+      const invitees = attendees.concat(absentees);
       return Rsvp.create({
         email,
         attendees: attendees.map(attendee => Object.assign(attendee, {
@@ -207,19 +231,8 @@ router.post('/options/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, fun
         roomId,
         inviteeId
       });
-    })
-    .then(rsvp => isTest
-      ? rsvpReply.html({attendees: rsvp.attendees, absentees: rsvp.absentees, room})
-      : rsvpReply.email({to: rsvp.email, attendees: rsvp.attendees, absentees: rsvp.absentees, room}))
-    .then(r => isTest
-      ? res.send(r)
-      : res.render('rsvp-result', {success: true, hasSelectedRoom, attending: invitees.length > 0}))
-    .catch(e => {
-      if (e.message !== 'USER_ROOM_TAKEN' && e.message !== 'USER_EMAIL_EXISTS') {
-        res.send(e.message);
-      }
     });
-});
+}
 
 router.get('/rsvps', ensureAuthenticated, ensureAdmin, function (req, res, next) {
   let rsvps;

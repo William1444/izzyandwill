@@ -21,7 +21,7 @@ block content
                 | Please try again with your name as it appears on the invitation! Alternatively email us on
                 a(href=`mailto:${fromEmail}`)  #{fromEmail}
                 |  or call us on
-                a(href=`tel:${tel}`) #{tel}.
+                a(href=`tel:${tel}`)  #{tel}.
             else if tooManyMatch
               p
                 .error-message Whoops! Something went wrong.. We have found too many invitees with the name #{firstName} #{lastName}.
