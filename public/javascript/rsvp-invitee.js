@@ -1,15 +1,6 @@
 const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const formErrors = {};
 
-function checkEmail(str, statusElement) {
-  if (!emailRegex.test(str)) {
-    document.getElementById(statusElement).classList.add('error');
-    return false;
-  } else {
-    document.getElementById(statusElement).classList.remove('error');
-  }
-}
-
 function addErrorClass(els, error) {
   els.forEach(e => {
     e.classList.add('error');
@@ -72,10 +63,6 @@ function initOnBlurDefault(validationFn) {
 //   }
 // }
 
-function toggleMenu(id) {
-  document.getElementById(id).classList.toggle('menu-open')
-}
-
 function requiredInput(target) {
   if (isHidden(target)) {
     return;
@@ -96,41 +83,14 @@ function requiredInput(target) {
   }
 }
 
-function attendingValidator(target) {
-  const radios = target.parentNode.getElementsByTagName('input');
-  for (let i = 0; i < radios.length; i++) {
-    if (radios[i].checked) {
-      delete formErrors[radios.id];
-      return;
-    }
-  }
-  formErrors[radios.id] = 'required';
-  validateForm();
-}
-
-function requiredOption(target) {
-  if (!target.value || isNaN(target.value)) {
-    formErrors[target.id] = 'required';
-  } else {
-    delete formErrors[target.id];
-  }
-  validateForm();
-}
-
-function attendingYes() {
-  rerunValidation(document.getElementById('rsvp'));
-  validateForm();
-}
-
-function attendingNo() {
-  rerunValidation(document.getElementById('rsvp'));
-  validateForm();
+function initialiseFormErrors(form) {
+  form.querySelectorAll('[required]').forEach(e => {
+    formErrors[e.id] = 'empty';
+  });
 }
 
 const valildationFns = {
-  requiredInput,
-  attendingValidator,
-  requiredOption
+  requiredInput
 };
 
 function initValidator(target, validatorFn) {
@@ -175,20 +135,34 @@ function initialiseFormValidation(form) {
 
 function validateForm() {
   if (Object.keys(formErrors).length < 1) {
-    document.getElementById('rsvp').classList.remove('invalid');
+    document.getElementById('rsvp').classList.remove('invalid')
   } else {
     document.getElementById('rsvp').classList.add('invalid')
   }
 }
 
 function init() {
+
   const form = document.getElementById('rsvp');
   initialiseFormValidation(form);
-  if (document.getElementById('attending-yes').checked) {
-    attendingYes();
-  } else if (document.getElementById('attending-no').checked) {
-    attendingNo();
+  let radios = document.querySelectorAll('[type="radio"]');
+  for(var i = 0; i < radios.length; i++) {
+    if (radios[i].checked) {
+      radios[i].click();
+    }
   }
+  // form.addEventListener('submit', function (event) {
+  //   let attendingClassList = document.getElementById('attending').classList;
+  //   if (emailValid && (document.getElementById('attending-yes').checked || document.getElementById('attending-yes').checked)) {
+  //     form.classList.add('disabled');
+  //     attendingClassList.remove('error');
+  //     attendingClassList.remove('error-required');
+  //   } else {
+  //     event.preventDefault();
+  //     attendingClassList.add('error');
+  //     attendingClassList.add('error-required');
+  //   }
+  // });
 };
 
 if (document.attachEvent) {

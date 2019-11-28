@@ -8,39 +8,47 @@ body#collection-5db850cb1739ee1838c29966(class='show-products-category-navigatio
         nav.main-nav.mobileNav
           ul
             for viewDescriptor in global.views
-              li(class=`page-collection${viewDescriptor.name === view ? ' active-link' : ''}`)
-                a(href=viewDescriptor.href)=viewDescriptor.name
+              if viewDescriptor.name === view
+                li.page-collection.active-link(onclick="toggleMenu('mobileNav')")
+                  a=viewDescriptor.name
+              else
+                li.page-collection
+                  a(href=viewDescriptor.href)=viewDescriptor.name
     #mobileMenuLink(onclick="toggleMenu('mobileNav')")
       a Menu
-    header#header.clear
-      #upper-logo
-        h1.logo(data-content-field='site-title')
-          a(href='/') Izzy &amp; Will
-      .site-info(data-content-field='business-information')
-        .site-address Street Address
-        .site-city-state City, State, Zip
-        .site-phone Phone Number
-      .site-tag-line
-        span=view + ' - Izzy &amp; Will'
-      .custom-info
-        #customInfoBlock.sqs-layout.sqs-grid-12.columns-12(data-layout-label='Header Subtitle: Custom Content' data-type='block-field')
-          .row.sqs-row
-            .col.sqs-col-12.span-12
-              #block-b1c45cf333263ee1b3e7.sqs-block.html-block.sqs-block-html(data-block-type='2')
-                .sqs-block-content
-                  p.text-align-center Your Custom Text Here
-      #lower-logo
-        h1.logo(data-content-field='site-title')
-          a(href='/') Izzy &amp; Will
-      #topNav
-        nav.main-nav(data-content-field='navigation')
-          ul
-            for viewDescriptor in global.views
-              li(class=`page-collection${viewDescriptor.name === view ? ' active-link' : ''}`)
-                a(href=viewDescriptor.href)=viewDescriptor.name
-          .page-divider
-    .page-divider.top-divider
-    // // page image or divider
-    section#page.clear(role='main' data-content-field='main-content' data-collection-id='5db850cb1739ee1838c29966' data-edit-main-image='Banner')
-      block content
-      #yui_3_17_2_1_1572780189629_3781.sqs-layout-insert-point-container
+    div(onclick="toggleOffMenu('mobileNav')")
+      header#header.clear
+        #upper-logo
+          h1.logo(data-content-field='site-title')
+            a(href='/') Izzy &amp; Will
+        .site-info(data-content-field='business-information')
+          .site-address Street Address
+          .site-city-state City, State, Zip
+          .site-phone Phone Number
+        .site-tag-line
+          span=view + ' - Izzy &amp; Will'
+        .custom-info
+          #customInfoBlock.sqs-layout.sqs-grid-12.columns-12(data-layout-label='Header Subtitle: Custom Content' data-type='block-field')
+            .row.sqs-row
+              .col.sqs-col-12.span-12
+                #block-b1c45cf333263ee1b3e7.sqs-block.html-block.sqs-block-html(data-block-type='2')
+                  .sqs-block-content
+                    p.text-align-center Your Custom Text Here
+        #lower-logo
+          h1.logo(data-content-field='site-title')
+            a(href='/') Izzy &amp; Will
+        #topNav
+          nav.main-nav(data-content-field='navigation')
+            ul
+              for viewDescriptor in global.views
+                li(class=`page-collection${viewDescriptor.name === view ? ' active-link' : ''}`)
+                  if viewDescriptor.name === view
+                    a=viewDescriptor.name
+                  else
+                    a(href=viewDescriptor.href)=viewDescriptor.name
+            .page-divider
+      .page-divider.top-divider
+      // // page image or divider
+      section#page.clear(role='main' data-content-field='main-content' data-collection-id='5db850cb1739ee1838c29966' data-edit-main-image='Banner')
+        block content
+        #yui_3_17_2_1_1572780189629_3781.sqs-layout-insert-point-container

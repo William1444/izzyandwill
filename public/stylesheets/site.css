@@ -1,3 +1,8 @@
+/* nav mod */
+li.page-collection.active-link:hover {
+    cursor: pointer;
+}
+
 /* radio button style */
 
 .form-radio {
