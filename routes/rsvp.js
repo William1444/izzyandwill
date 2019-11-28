@@ -161,10 +161,6 @@ router.get('/options/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, func
     }));
 });
 
-// router.get('/email', ensureAuthenticated, function (req, res, next) {
-//   res.render('rsvp-invitee');
-// });
-
 router.post('/options/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, function (req, res, next) {
   const attendeesMap = req.query;
   const body = req.body;
@@ -213,8 +209,8 @@ router.post('/options/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, fun
       });
     })
     .then(rsvp => isTest
-      ? rsvpReply.html({invitees, attendees: rsvp.attendees, room, absentees: rsvp.absentees})
-      : rsvpReply.email({to: rsvp.email, attendees: rsvp.attendees, room}))
+      ? rsvpReply.html({attendees: rsvp.attendees, absentees: rsvp.absentees, room})
+      : rsvpReply.email({to: rsvp.email, attendees: rsvp.attendees, absentees: rsvp.absentees, room}))
     .then(r => isTest
       ? res.send(r)
       : res.render('rsvp-result', {success: true, hasSelectedRoom, attending: invitees.length > 0}))

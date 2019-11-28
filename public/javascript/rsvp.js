@@ -128,38 +128,13 @@ function requiredOption(target) {
 }
 
 function attendingYes() {
-  document.getElementById('attending-answer-yes').style.display = 'block';
-  document.getElementById('other-guests-field').attributes["required"] = true;
-  document.getElementById('room-field').attributes["required"] = true;
   rerunValidation(document.getElementById('rsvp'));
   validateForm();
 }
 
 function attendingNo() {
-  document.getElementById('attending-answer-yes').style.display = 'none';
-
-  const otherGuestsField = document.getElementById('other-guests-field');
-  otherGuestsField.attributes["required"] = false;
-  otherGuestsField.value = '';
-  otherGuestsField.classList.remove('touched');
-  document.getElementById('other-guests').classList.remove('touched');
-
-  let roomField = document.getElementById('room-field');
-  roomField.attributes["required"] = false;
-  roomField.value = '';
-  roomField.classList.remove('touched');
-  document.getElementById('room').classList.remove('touched');
-
   rerunValidation(document.getElementById('rsvp'));
-  delete formErrors['room-field']; // this is lazy.. sorry
-  delete formErrors['other-guests-field']; // this is lazy.. sorry
   validateForm();
-}
-
-function initialiseFormErrors(form) {
-  form.querySelectorAll('[required]').forEach(e => {
-    formErrors[e.id] = 'empty';
-  });
 }
 
 const valildationFns = {
@@ -216,45 +191,7 @@ function validateForm() {
   }
 }
 
-function createRoomOptions(rooms) {
-  function createRoomOptionNode(value, text) {
-    let option = document.createElement('option');
-    option.setAttribute('value', value);
-    option.appendChild(document.createTextNode(text));
-    return option;
-  }
-
-  const roomSelect = document.getElementById('room-field');
-
-  let selectOption = createRoomOptionNode('', 'Select room');
-  selectOption.setAttribute('disabled', true);
-  selectOption.setAttribute('selected', true);
-  selectOption.setAttribute('style', 'style="display: none"');
-
-  roomSelect.appendChild(selectOption);
-
-  rooms
-    .filter(room => !room.assignee && !room.paid)
-    .sort((a, b) => a.room < b.room ? -1 : 1)
-    .map(room => createRoomOptionNode(room._id, room.room))
-    .forEach(optionNode => roomSelect.appendChild(optionNode));
-
-}
-
 function init() {
-  var xmlhttp = new XMLHttpRequest();
-  var url = "/room";
-
-  xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      var myArr = JSON.parse(this.responseText);
-      createRoomOptions(myArr);
-    }
-  };
-
-  xmlhttp.open("GET", url, true);
-  xmlhttp.send();
-
   const form = document.getElementById('rsvp');
   initialiseFormValidation(form);
   if (document.getElementById('attending-yes').checked) {
@@ -262,18 +199,6 @@ function init() {
   } else if (document.getElementById('attending-no').checked) {
     attendingNo();
   }
-  // form.addEventListener('submit', function (event) {
-  //   let attendingClassList = document.getElementById('attending').classList;
-  //   if (emailValid && (document.getElementById('attending-yes').checked || document.getElementById('attending-yes').checked)) {
-  //     form.classList.add('disabled');
-  //     attendingClassList.remove('error');
-  //     attendingClassList.remove('error-required');
-  //   } else {
-  //     event.preventDefault();
-  //     attendingClassList.add('error');
-  //     attendingClassList.add('error-required');
-  //   }
-  // });
 };
 
 if (document.attachEvent) {

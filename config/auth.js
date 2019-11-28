@@ -12,7 +12,7 @@ module.exports = {
       return next();
     } else {
       req.flash('error_msg', 'Please log in as admin to view that resource');
-      res.send(400, 'not authorized');
+      res.status(400).send('not authorized');
     }
   },
   forwardAuthenticated: function (req, res, next) {

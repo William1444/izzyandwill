@@ -2,7 +2,7 @@ const {fromEmail, fromTel, sendgridApiKey, siteUrl, sortCode, accountNumber} = r
 const sg = require('sendgrid')(sendgridApiKey);
 const emailerTemplate = require('./emailer-template');
 
-const email = ({to, firstName, lastName, attending, otherGuests, room}) => {
+const email = ({to, attendees, absentees, room}) => {
   const request = sg.emptyRequest({
     method: 'POST',
     path: '/v3/mail/send',
@@ -23,7 +23,7 @@ const email = ({to, firstName, lastName, attending, otherGuests, room}) => {
       content: [
         {
           type: 'text/html',
-          value: html({firstName, lastName, attending, otherGuests, room})
+          value: html({attendees, absentees, room})
         }
       ]
     }
@@ -44,12 +44,12 @@ function getFullNameList(attendees) {
     .replace(/,(?!.*,)/, ' &');
 }
 
-const html = ({invitees, attendees, absentees, room}) => {
+const html = ({attendees, absentees, room}) => {
   const roomSummary = room && room.room || 'NA';
   const helloMsg = `
-<p>Hi ${getFullNameList(invitees)}</p>`
+<p>Hi</p>`
   const anyChanges = `
-<p>If you made a mistake in your RSVP, or need to make changes then please reply to this email, alternatively
+<p>If you made a mistake in your RSVP, or need to make changes then please reply to this email or alternatively
 call Izzy on <a href="tel:${fromTel}"></a>${fromTel}</p>`;
 
   if (!attendees || attendees.length === 0) {
@@ -59,7 +59,7 @@ call Izzy on <a href="tel:${fromTel}"></a>${fromTel}</p>`;
   const attendingMsg = `
 <p>We are so pleased that ${getFullNameList(attendees)} will be joining us at <b>Orchardleigh</b> on <b>Saturday 6 June 2020</b> to celebrate our marriage!</p>`;
 
-  const absenteeMsg = absentees && absentees.length > 0 && `<p>Please do let us know if ${getFullNameList(absentees)} will be able to make it!</p>`;
+  const absenteeMsg = absentees && absentees.length > 0 && `<p>Please do let us know if ${getFullNameList(absentees)} will be able to make it!</p>` || ''
 
   const roominfoMsg = roomSummary !== 'NA' && `
 <p>You've decided to stay with us at Orchardleigh in <b>${room.room}</p>
@@ -71,7 +71,7 @@ call Izzy on <a href="tel:${fromTel}"></a>${fromTel}</p>`;
 
   const attendeesRsvpDetails = attendees.map(a => `
   <tr>
-    <td>${reverseCamelCase(a.firstName)} meal choice:</td>
+    <td>${reverseCamelCase(a.firstName)}'s meal choice:</td>
     <td style="font-weight: normal">${a.foodChoice}</td>
   </tr>
 `).join('');

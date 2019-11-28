@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {ensureAdmin} = require('./../config/auth');
+const ensureApiKey = require('./../middleware/ensureApiKey');
 const Invitee = require('./../models/invitee');
 const mongoose = require('mongoose');
 const crypto = require('crypto');
@@ -24,7 +25,7 @@ function addIdToInvitees(invitees) {
   return invitees.map(addIdToInvitee);
 }
 
-router.post('/bulk', ensureAdmin, function (req, res) {
+router.post('/bulk', ensureApiKey, function (req, res) {
   Invitee.find({})
     .then(i => {
       if (i && i.length > 0) {
@@ -45,7 +46,7 @@ router.post('/bulk', ensureAdmin, function (req, res) {
     });
 });
 
-router.post('/', ensureAdmin, function (req, res) {
+router.post('/', ensureApiKey, function (req, res) {
   Invitee.create(addIdToInvitee(req.body))
     .then(() => res.send("SUCCESS"))
 });

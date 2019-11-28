@@ -13,5 +13,6 @@ module.exports = {
   sortCode: process.env.SORT_CODE || '00-00-00',
   accountNumber: process.env.ACCOUNT_NUMBER || '12341234',
   mapsApiKey: process.env.MAPS_API_KEY || 'NOT_SET',
-  isTest: process.env.NODE_ENV === 'test'
+  isTest: process.env.NODE_ENV === 'test',
+  apiKey: process.env.API_KEY || 'key'
 };
