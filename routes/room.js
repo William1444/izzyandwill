@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Room = require('./../models/room');
 const {ensureAuthenticated, ensureAdmin} = require('./../config/auth');
+const ensureApiKey = require('./../middleware/ensureApiKey');
 
 /* GET rooms */
 router.get('/', ensureAuthenticated, function (req, res, next) {
@@ -55,6 +56,35 @@ router.post('/admin/:id', ensureAuthenticated, ensureAdmin, function (req, res, 
   Room.updateOne({_id: req.params.id}, updatedRoom)
     .then(() => res.redirect(`/room/admin`))
     .catch(err => next(err))
+});
+
+/* POST bulk create rooms */
+router.post('/bulk', ensureApiKey, function (req, res) {
+  Room.find({})
+    .then(i => {
+      if (i && i.length > 0) {
+        res.status(400).send('room db already has content. Use /room api instead');
+        throw new Error('USER_ROOM_NOT_EMPTY');
+      }
+    })
+    .then(() =>
+      Promise.all(
+        req.body
+          .map(r => Room.create(r))
+      ))
+    .then(() => res.send("SUCCESS"))
+    .catch(e => {
+      if ('USER_ROOM_NOT_EMPTY' !== e.message) {
+        res.status(500).send(e.message);
+      }
+    });
+});
+
+/* POST create rooms */
+router.post('/', ensureApiKey, function (req, res) {
+  Room.create(req.body)
+    .then(() => res.send("SUCCESS"))
+    .catch(e => res.status(500).send(e.message))
 });
 
 module.exports = router;
