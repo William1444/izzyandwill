@@ -27,6 +27,27 @@ function validate() {
 
 function init() {
   validate();
+  preventDuplicateSubmit();
+}
+
+let formSubmitted = false;
+
+function processForm(e) {
+  if (formSubmitted) {
+    e.preventDefault();
+    return false;
+  } else {
+    formSubmitted = true;
+  }
+}
+
+function preventDuplicateSubmit() {
+  const form = document.getElementById('rsvp');
+  if (form.attachEvent) {
+    form.attachEvent("submit", processForm);
+  } else {
+    form.addEventListener("submit", processForm);
+  }
 }
 
 if (document.attachEvent) {

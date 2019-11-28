@@ -230,11 +230,31 @@ function createRoomOptions(rooms) {
 
 }
 
+
+let formSubmitted = false;
+
+function processForm(e) {
+  if (formSubmitted) {
+    e.preventDefault();
+    return false;
+  } else {
+    formSubmitted = true;
+  }
+}
+function preventDuplicateSubmit() {
+  const form = document.getElementById('rsvp');
+  if (form.attachEvent) {
+    form.attachEvent("submit", processForm);
+  } else {
+    form.addEventListener("submit", processForm);
+  }
+}
+
 function init() {
   var xmlhttp = new XMLHttpRequest();
   var url = "/room";
 
-  xmlhttp.onreadystatechange = function() {
+  xmlhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       var myArr = JSON.parse(this.responseText);
       createRoomOptions(myArr);
@@ -244,10 +264,12 @@ function init() {
   xmlhttp.open("GET", url, true);
   xmlhttp.send();
 
+  preventDuplicateSubmit();
+
   const form = document.getElementById('rsvp');
   initialiseFormValidation(form);
   let radios = document.querySelectorAll('[type="radio"]');
-  for(var i = 0; i < radios.length; i++) {
+  for (var i = 0; i < radios.length; i++) {
     if (radios[i].checked) {
       radios[i].click();
     }
@@ -288,6 +310,8 @@ if (document.attachEvent) {
   });
 }
 
-function toggleClicked(el){
+function toggleClicked(el) {
   el.classList.toggle("clicked");
 }
+
+
