@@ -3,6 +3,7 @@ include mixins/_headerImage
 block variables
   - var view = 'Travel'
 block content
+  script(type='text/javascript' src='/javascript/travel.js')
   .sqs-layout.sqs-grid-12.columns-12.sqs-frontend-overlay-editor-widget-host(data-type='page' style='')
     +headerImage('/images/travel.jpeg')
     #block-yui_3_17_2_1_1572362319442_23576.sqs-block.html-block.sqs-block-html(data-block-type='2')
@@ -52,7 +53,7 @@ block content
             p(style='white-space:pre-wrap;')
             | The easiest way to get to Orchardleigh, is to use google maps to get to the
             |
-            a(href='https://goo.gl/maps/LN4DZFoq2t5GtSxe6') Entrance to the estate.
+            a(href='https://goo.gl/maps/LN4DZFoq2t5GtSxe6' target="_blank") Entrance to the estate.
             br
             br
             #map
