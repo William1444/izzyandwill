@@ -156,8 +156,10 @@ router.post('/attending/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, f
       pathname: `/rsvp/options/${inviteeId}/${leadBookerInviteeId}`
     }));
   } else {
-    createRsvp({inviteeId, attendingMap, leadBookerInviteeId})
-      .then(rsvp => res.render('rsvp-result', {success: true,}));
+    ensureRsvpDoesNotExist(inviteeId, res)
+      .then(() => createRsvp({inviteeId, attendingMap, leadBookerInviteeId}))
+      .then(rsvp => res.render('rsvp-result', {success: true,}))
+      .catch(handleError(res));
   }
 });
 
@@ -205,12 +207,16 @@ router.post('/options/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, fun
     .then(r => isTest
       ? res.send(r)
       : res.render('rsvp-result', {success: true, hasSelectedRoom, attending: rsvp.attendees.length > 0}))
-    .catch(e => {
-      if (e.message !== 'USER_ROOM_TAKEN' && e.message !== 'USER_EMAIL_EXISTS') {
-        res.send(e.message);
-      }
-    });
+    .catch(handleError(res));
 });
+
+function handleError(res) {
+  return e => {
+    if (e.message !== 'USER_ROOM_TAKEN' && e.message !== 'USER_EMAIL_EXISTS') {
+      res.send(e.message);
+    }
+  }
+}
 
 function createRsvp({inviteeId, attendingMap, leadBookerInviteeId, foodMap = {}, message = '', roomId = NA_ROOM_ID, email = ''}) {
   return Rsvp.init()
@@ -234,20 +240,24 @@ function createRsvp({inviteeId, attendingMap, leadBookerInviteeId, foodMap = {},
     });
 }
 
-router.get('/rsvps', ensureAuthenticated, ensureAdmin, function (req, res, next) {
+router.get('/admin', ensureAuthenticated, ensureAdmin, function (req, res, next) {
   let rsvps;
-  Promise.all([Rsvp.find({}), Room.find({})])
-    .then(([rsvpsResult, rooms]) => {
-      rsvps = rsvpsResult;
-      return rsvps
+  let inviteCounter = 0, togetherSwitch;
+  Promise.all([Rsvp.find({}), Invitee.find({}), Room.find({})])
+    .then(([rsvps, invitees, rooms]) =>
+      rsvps
         .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
-        .reduce((accum, rsvp, i) => {
+        .reduce((accum, rsvp) => {
+          inviteCounter+=1;
           const room = rooms.find(r => r._id === rsvp.roomId);
+          togetherSwitch = inviteCounter % 2 === 0 ? 'a' : 'b';
           const absentees = rsvp.absentees.map(absentee => Object.assign(absentee, {
+            hasRsvp: true,
+            hasRsvpText: 'Yes',
             isAttending: 'No',
             foodChoice: 'NA',
             email: rsvp.email,
-            togetherSwitch: i % 2 === 0 ? 'a' : 'b',
+            togetherSwitch,
             roomPaid: 'NA',
             roomPrice: 'NA',
             room: 'NA',
@@ -255,9 +265,11 @@ router.get('/rsvps', ensureAuthenticated, ensureAdmin, function (req, res, next)
             time: rsvp.time
           }));
           const attendees = rsvp.attendees.map(attendee => Object.assign(attendee, {
+            hasRsvp: true,
+            hasRsvpText: 'Yes',
             isAttending: 'Yes',
             email: rsvp.email,
-            togetherSwitch: i % 2 === 0 ? 'a' : 'b',
+            togetherSwitch,
             room: room.room,
             roomPaid: room.paid,
             roomPrice: room.price,
@@ -269,14 +281,41 @@ router.get('/rsvps', ensureAuthenticated, ensureAdmin, function (req, res, next)
             .sort((a, b) => b.leadBooker ? 1 : 0);
           return accum.concat(sortedInvitees);
         }, [])
-    })
-    .then(invitees => res.render('rsvps', {
-      invitees,
+        .concat(
+          invitees
+            .filter(invitee => !rsvps.find(r => r.inviteeId === invitee.id))
+            .reduce((accum, invitee, i) => {
+              inviteCounter+=1;
+              const togetherSwitch = inviteCounter % 2 === 0 ? 'a' : 'b';
+              console.info(inviteCounter + i)
+              console.info(inviteCounter);
+              console.info(invitee.invitees[0].fullName);
+              return accum.concat(
+                invitee.invitees.map(guest => ({
+                  fullName: guest.fullName,
+                  hasRsvp: false,
+                  hasRsvpText: 'No',
+                  isAttending: '',
+                  foodChoice: '',
+                  email: '',
+                  togetherSwitch,
+                  roomPaid: '',
+                  roomPrice: '',
+                  room: '',
+                  message: '',
+                  time: ''
+                })))
+            }, [])
+        )
+    )
+    .then(inviteesStatus => res.render('rsvps', {
+      invitees: inviteesStatus,
       totals: {
-        repliedYes: invitees.filter(i => i.isAttending === 'Yes').length,
-        repliedNo: invitees.filter(i => i.isAttending === 'No').length,
-        replied: invitees.length,
-        rsvps: rsvps.length
+        attending: inviteesStatus.filter(i => i.hasRsvp && i.isAttending === 'Yes').length,
+        notAttending: inviteesStatus.filter(i => i.hasRsvp && i.isAttending === 'No').length,
+        replied: inviteesStatus.filter(i => i.hasRsvp).length,
+        notReplied: inviteesStatus.filter(i => !i.hasRsvp).length,
+        invitees: inviteesStatus.length
       }
     }))
     .catch(e => next(e));

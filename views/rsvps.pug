@@ -8,6 +8,7 @@ html
       tr
         th Email
         th Full Names
+        th Rsvp
         th Attending
         th Room
         th Room paid
@@ -15,9 +16,10 @@ html
         th Message
         th Time
       each invitee in invitees
-        tr(class=`together ${invitee.togetherSwitch} ${invitee.leadBooker && 'leadBooker'}`)
+        tr(class=`together ${invitee.togetherSwitch} ${invitee.leadBooker && 'leadBooker' || ''} ${invitee.hasRsvp && 'rsvp' || 'no-rsvp'}`)
           td #{invitee.email}
           td #{invitee.fullName}
+          td #{invitee.hasRsvpText}
           td #{invitee.isAttending}
           td #{invitee.room}
           td #{invitee.roomPaid}
@@ -30,14 +32,17 @@ html
         th Total
         th Value
       tr
+        td Attending
+        td #{totals.attending}
+      tr
+        td Not Attending
+        td #{totals.notAttending}
+      tr
         td Rsvps
-        td #{totals.rsvps}
-      tr
-        td Attendees
-        td #{totals.repliedYes}
-      tr
-        td Absentees
-        td #{totals.repliedNo}
-      tr
-        td Guests replied
         td #{totals.replied}
+      tr
+        td No Rsvp
+        td #{totals.notReplied}
+      tr
+        td Invitees
+        td #{totals.invitees}

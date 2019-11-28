@@ -132,12 +132,20 @@ form.disabled {
 
 /* admin page */
 
-.together.a td {
+.together.a.rsvp td {
     background-color: #f0fcf9;
 }
 
-.together.b td {
+.together.b.rsvp td {
     background-color: #e7f5e3;
+}
+
+.together.a.no-rsvp td {
+    background-color: #e7ded6;
+}
+
+.together.b.no-rsvp td {
+    background-color: #d3cac2;
 }
 
 .leadBooker td {
