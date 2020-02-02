@@ -472,21 +472,6 @@
   {
     "invitees": [
       {
-        "fullName": "Annie Laurie",
-        "match": {
-          "firstName": [
-            "Annie"
-          ],
-          "lastName": [
-            "Laurie"
-          ]
-        }
-      }
-    ]
-  },
-  {
-    "invitees": [
-      {
         "fullName": "Thelma Lacy",
         "match": {
           "firstName": [
@@ -571,7 +556,7 @@
         }
       },
       {
-        "fullName": "Olivia Lacy ",
+        "fullName": "Olivia Lacy",
         "match": {
           "firstName": [
             "Olivia"
@@ -582,7 +567,7 @@
         }
       },
       {
-        "fullName": "Poppy Lacy ",
+        "fullName": "Poppy Lacy",
         "match": {
           "firstName": [
             "Poppy",
@@ -739,7 +724,7 @@
   {
     "invitees": [
       {
-        "fullName": "Tom Cornwell ",
+        "fullName": "Tom Cornwell",
         "match": {
           "firstName": [
             "Tom",
@@ -755,7 +740,7 @@
   {
     "invitees": [
       {
-        "fullName": "Gary Cornwell ",
+        "fullName": "Gary Cornwell",
         "match": {
           "firstName": [
             "Gary",
@@ -1038,7 +1023,7 @@
   {
     "invitees": [
       {
-        "fullName": "Tom Hobbs ",
+        "fullName": "Tom Hobbs",
         "match": {
           "firstName": [
             "Tom",
