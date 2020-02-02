@@ -1195,5 +1195,37 @@
         }
       }
     ]
+  },
+  {
+    "invitees": [
+      {
+        "fullName": "Donna Bristow",
+        "match": {
+          "firstName": [
+            "Donna",
+            "Dons"
+          ],
+          "lastName": [
+            "Bristow"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "invitees": [
+      {
+        "fullName": "Carla Gilbert",
+        "match": {
+          "firstName": [
+            "Carla"
+          ],
+          "lastName": [
+            "Gilbert",
+            "Jayne"
+          ]
+        }
+      }
+    ]
   }
 ]
