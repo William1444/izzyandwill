@@ -18864,3 +18864,16 @@ img[data-src]:not([src]) {
     text-transform: uppercase
 }
 
+.explainer {
+    font-family: Varela Round, arial, sans-serif;
+    font-weight: normal;
+    font-size: 12px;
+    letter-spacing: 3px;
+    font-family: "proxima-nova";
+    font-size: 14px;
+    line-height: 1.6em;
+    text-decoration: none;
+    letter-spacing: 2px;
+    font-weight: 300;
+    font-style: normal
+}
