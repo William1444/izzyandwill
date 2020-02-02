@@ -7,7 +7,7 @@ const ensureApiKey = require('./../middleware/ensureApiKey');
 /* GET rooms */
 router.get('/', ensureAuthenticated, function (req, res, next) {
   Room.find({})
-    .then(rooms => res.send(rooms))
+    .then(rooms => res.send(rooms.concat([{_id: -1, room: "NA"}])))
     .catch(err => next(err))
 });
 

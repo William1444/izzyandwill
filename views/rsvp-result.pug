@@ -11,13 +11,17 @@ block content
         .error We have already received a response to this invite.
         | If you've already submitted the RSVP but would like to let us know of any changes or this doesn't seem right then please email
         a(href=`mailto:${fromEmail}`)  #{fromEmail}
+        |  or call us on
+        a(href=`tel:${tel}`)  #{tel}
         | .
     else if success
       h2 Thank you for your RSVP!
       if hasSelectedRoom
         p You will soon receive an email to confirm. We are delighted that you wish to stay with us at the venue. The email contains instructions on how to pay for and secure the room.
-        | If you do not receive anything within 24 hours, or have any other query then please email
+        | If you do not receive anything within 24 hours please double check your spam folder. For any queries please do not hesitate to email
         a(href=`mailto:${fromEmail}`)  #{fromEmail}
+        |  or call us on
+        a(href=`tel:${tel}`)  #{tel}
         | .
       else if attending
         p You will soon receive an email to confirm.
@@ -28,11 +32,13 @@ block content
           |
           | require a room at the venue. If you do not receive anything within 24 hours, or have any other query then please email
           a(href=`mailto:${fromEmail}`)  #{fromEmail}
-          | .
+          |  or call us on
+          a(href=`tel:${tel}`)  #{tel}
+            | .
       else
         p We are really sorry to here that you are not able to join us, but understand that not everyone will be able to attend our day.
         p Please email us on
           a(href=`mailto:${fromEmail}`)  #{fromEmail}
           |  or call us on
           a(href=`tel:${tel}`)  #{tel}
-          |  if you have any more questions.
+          |  if you change your mind or have any more questions.
