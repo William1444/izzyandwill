@@ -45,6 +45,7 @@ call Izzy on <a href="tel:${fromTel}"></a>${fromTel}</p>`;
 <p>You've decided to stay with us at Orchardleigh in <b>${room.room}</p>
 <p>The price for the room is <b>£${room.price}</b></p>
 <p>To secure the room, please transfer £${room.price} to the following account:</p>
+<p style="padding-left=20px">Account Holder: Isabel Miller</p>
 <p style="padding-left=20px">Sort Code: ${sortCode}</p>
 <p style="padding-left=20px">Account Number: ${accountNumber}</p>
 <p style="padding-left=20px">Reference: OL ${room.room}</p>` || '';
@@ -91,6 +92,7 @@ The price for the room is £${room.price}
 
 To secure the room, please transfer £${room.price} to the following account:
 
+Account Holder: Isabel Miller
 Sort Code: ${sortCode}
 Account Number: ${accountNumber}
 Reference: OL ${room.room}\n\n`;
