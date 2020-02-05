@@ -303,7 +303,7 @@ module.exports = function formatEmail(message) {
     </style>
   </head>
   <body class="">
-    <span class="preheader">This is preheader text. Some clients will show this text as a preview.</span>
+    <span class="preheader">We are so pleased that you will be joing us on Saturday 6 June 2020</span>
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
       <tr>
         <td>&nbsp;</td>
