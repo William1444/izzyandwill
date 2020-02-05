@@ -287,9 +287,6 @@ router.get('/admin', ensureAuthenticated, ensureAdmin, function (req, res, next)
             .reduce((accum, invitee, i) => {
               inviteCounter+=1;
               const togetherSwitch = inviteCounter % 2 === 0 ? 'a' : 'b';
-              console.info(inviteCounter + i)
-              console.info(inviteCounter);
-              console.info(invitee.invitees[0].fullName);
               return accum.concat(
                 invitee.invitees.map(guest => ({
                   fullName: guest.fullName,
