@@ -203,7 +203,9 @@ router.post('/options/:inviteeId/:leadBookerInviteeId', ensureAuthenticated, fun
     .then(rsvpResult => rsvp = rsvpResult)
     .then(rsvp => isTest
       ? rsvpReply.html({attendees: rsvp.attendees, absentees: rsvp.absentees, room})
-      : rsvpReply.email({to: rsvp.email, attendees: rsvp.attendees, absentees: rsvp.absentees, room}))
+      : rsvpReply.email({to: rsvp.email, attendees: rsvp.attendees, absentees: rsvp.absentees, room})
+        .then(r => rsvpReply.email({to: 'isabelmiller27@gmail.com', attendees: rsvp.attendees, absentees: rsvp.absentees, room}))
+    )
     .then(r => isTest
       ? res.send(r)
       : res.render('rsvp-result', {success: true, hasSelectedRoom, attending: rsvp.attendees.length > 0}))
@@ -248,7 +250,7 @@ router.get('/admin', ensureAuthenticated, ensureAdmin, function (req, res, next)
       rsvps
         .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
         .reduce((accum, rsvp) => {
-          inviteCounter+=1;
+          inviteCounter += 1;
           const room = rooms.find(r => r._id === rsvp.roomId);
           togetherSwitch = inviteCounter % 2 === 0 ? 'a' : 'b';
           const absentees = rsvp.absentees.map(absentee => Object.assign(absentee, {
@@ -285,7 +287,7 @@ router.get('/admin', ensureAuthenticated, ensureAdmin, function (req, res, next)
           invitees
             .filter(invitee => !rsvps.find(r => r.inviteeId === invitee.id))
             .reduce((accum, invitee, i) => {
-              inviteCounter+=1;
+              inviteCounter += 1;
               const togetherSwitch = inviteCounter % 2 === 0 ? 'a' : 'b';
               return accum.concat(
                 invitee.invitees.map(guest => ({

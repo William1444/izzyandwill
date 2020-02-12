@@ -1,14 +1,33 @@
 const express = require('express');
-const router = express.Router();
-const {ensureAdmin} = require('./../config/auth');
+const router = express.Router()
 const ensureApiKey = require('./../middleware/ensureApiKey');
 const Invitee = require('./../models/invitee');
-const mongoose = require('mongoose');
 const crypto = require('crypto');
 
-router.get('/', ensureAdmin, function (req, res) {
+router.get('/', ensureApiKey, function (req, res) {
   Invitee.find({})
     .then(i => res.send(i))
+});
+
+router.get('/:id', ensureApiKey, function (req, res, next) {
+  Invitee.findOne({_id: req.params.id})
+    .then(invitee => {
+      if (!invitee) {
+        let error = new Error("Not Found");
+        error.status = 404;
+        return next(error)
+      } else {
+        res.send(invitee);
+      }
+    })
+    .catch(err => next(err))
+});
+
+/* POST admin room */
+router.put('/:id', ensureApiKey, function (req, res, next) {
+  Invitee.updateOne({_id: req.params.id}, req.body)
+    .then(r => res.send(r))
+    .catch(err => next(err))
 });
 
 function addIdToInvitee(invitee) {
