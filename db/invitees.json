@@ -786,14 +786,14 @@
   {
     "invitees": [
       {
-        "fullName": "Darren Shepard",
+        "fullName": "Darren Shepherd",
         "match": {
           "firstName": [
             "Darren",
             "Daz"
           ],
           "lastName": [
-            "Shepard"
+            "Shepherd"
           ]
         }
       }
@@ -947,7 +947,7 @@
         }
       },
       {
-        "fullName": "Charan Bogal",
+        "fullName": "Charan Bhogal",
         "match": {
           "firstName": [
             "Charan"
