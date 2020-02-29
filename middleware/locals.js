@@ -1,6 +1,7 @@
 const {fromEmail, fromTel, mapsApiKey} = require('./../config');
 module.exports = function (req, res, next) {
-  res.locals = ({
+  const isAdmin = req.isAuthenticated() && req.user.admin;
+  res.locals = {
     fromEmail,
     tel: fromTel,
     mapsApiKey,
@@ -36,7 +37,10 @@ module.exports = function (req, res, next) {
         }
       ]
     }
-  });
+  };
+  if (isAdmin) {
+    res.locals.global.views = [{name: 'admin: rsvp', href: '/rsvp/admin'}, {name: 'admin: room', href: '/room/admin'}].concat(res.locals.global.views)
+  }
 
   next();
 };

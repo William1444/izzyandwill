@@ -19,7 +19,6 @@ const app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.use(locals);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -47,6 +46,7 @@ app.use(passport.session());
 app.use(flash());
 
 // Global variables
+app.use(locals);
 app.use(function(req, res, next) {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
