@@ -251,7 +251,8 @@ router.get('/admin', ensureAuthenticated, ensureAdmin, function (req, res, next)
         .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
         .reduce((accum, rsvp) => {
           inviteCounter += 1;
-          const room = rooms.find(r => r._id === rsvp.roomId);
+          let roomId = rsvp.roomId;
+          const room = roomId > -1 ? rooms.find(r => r._id === roomId) : {room: 'NA'};
           togetherSwitch = inviteCounter % 2 === 0 ? 'a' : 'b';
           const absentees = rsvp.absentees.map(absentee => Object.assign(absentee, {
             hasRsvp: true,
