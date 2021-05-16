@@ -55,17 +55,6 @@
             "Miller"
           ]
         }
-      },
-      {
-        "fullName": "Dora Sandford",
-        "match": {
-          "firstName": [
-            "Dora"
-          ],
-          "lastName": [
-            "Sandford"
-          ]
-        }
       }
     ]
   },
@@ -83,14 +72,14 @@
         }
       },
       {
-        "fullName": "Amny Au",
+        "fullName": "Amny Miller",
         "match": {
           "firstName": [
             "Amny"
           ],
           "lastName": [
-            "Au",
-            "Miller"
+            "Miller",
+            "Au"
           ]
         }
       }
@@ -472,6 +461,21 @@
   {
     "invitees": [
       {
+        "fullName": "Annie Laurie",
+        "match": {
+          "firstName": [
+            "Annie"
+          ],
+          "lastName": [
+            "Laurie"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "invitees": [
+      {
         "fullName": "Thelma Lacy",
         "match": {
           "firstName": [
@@ -732,6 +736,17 @@
           ],
           "lastName": [
             "Cornwell"
+          ]
+        }
+      },
+      {
+        "fullName": "Amanda Ellis",
+        "match": {
+          "firstName": [
+            "Amanda"
+          ],
+          "lastName": [
+            "Ellis"
           ]
         }
       }
@@ -1184,56 +1199,25 @@
   {
     "invitees": [
       {
-        "fullName": "Donna Bristow",
+        "fullName": "Sarah Scott",
         "match": {
           "firstName": [
-            "Donna",
-            "Dons"
+            "Sarah"
           ],
           "lastName": [
-            "Bristow"
-          ]
-        }
-      }
-    ]
-  },
-  {
-    "invitees": [
-      {
-        "fullName": "Carla Gilbert",
-        "match": {
-          "firstName": [
-            "Carla"
-          ],
-          "lastName": [
-            "Gilbert",
-            "Jayne"
-          ]
-        }
-      }
-    ]
-  },
-  {
-    "invitees": [
-      {
-        "fullName": "Martin Gilbert",
-        "match": {
-          "firstName": [
-            "Martin"
-          ],
-          "lastName": [
-            "Gilbert"
+            "Scott"
           ]
         }
       },
       {
-        "fullName": "Liz Gilbert",
+        "fullName": "Jen Armour",
         "match": {
           "firstName": [
-            "Liz"
+            "Jen",
+            "Jennifer"
           ],
           "lastName": [
-            "Gilbert"
+            "Armour"
           ]
         }
       }
@@ -1242,52 +1226,14 @@
   {
     "invitees": [
       {
-        "fullName": "Brian Suckling",
+        "fullName": "Matt Sayers",
         "match": {
           "firstName": [
-            "Brian",
-            "Bri"
+            "Matt",
+            "Matthew"
           ],
           "lastName": [
-            "Suckling"
-          ]
-        }
-      },
-      {
-        "fullName": "Wendy Suckling",
-        "match": {
-          "firstName": [
-            "Wendy"
-          ],
-          "lastName": [
-            "Suckling"
-          ]
-        }
-      }
-    ]
-  },
-  {
-    "invitees": [
-      {
-        "fullName": "Janet Elswood",
-        "match": {
-          "firstName": [
-            "Janet",
-            "Jan"
-          ],
-          "lastName": [
-            "Elswood"
-          ]
-        }
-      },
-      {
-        "fullName": "Frank Elswood",
-        "match": {
-          "firstName": [
-            "Frank"
-          ],
-          "lastName": [
-            "Elswood"
+            "Sayers"
           ]
         }
       }

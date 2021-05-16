@@ -28,10 +28,6 @@ module.exports = function (req, res, next) {
           href: '/gifts'
         },
         {
-          name: 'RSVP',
-          href: '/rsvp'
-        },
-        {
           name: 'Photos',
           href: '/photos'
         }

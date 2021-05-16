@@ -23,7 +23,7 @@ util.promisify(fs.readFile)(path.join(__dirname, '../db/invites.csv'))
         return accum
       }, [])
       .filter(i => !!i))
-  .then(invitees => util.promisify(fs.writeFile)(path.join(__dirname, '../db/invitees-res.json'), JSON.stringify(invitees)))
+  .then(invitees => util.promisify(fs.writeFile)(path.join(__dirname, '../db/invitees.json'), JSON.stringify(invitees)))
   .then(() => {
     console.info('success');
     process.exit(0);
