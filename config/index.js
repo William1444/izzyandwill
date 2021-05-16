@@ -13,7 +13,7 @@ module.exports = {
   mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/izzyandwill',
   fromEmail: process.env.FROM_EMAIL || 'example.email@gmail.com',
   fromTel: process.env.FROM_TEL || '07123123123',
-  siteUrl: 'www.izzyandwill.co.uk',
+  siteUrl: process.env.SITE_URL || 'www.izzyandwill.co.uk',
   userPassword: process.env.USER_PASSWORD || 'password',
   adminPassword: process.env.ADMIN_PASSWORD || 'admin',
   sortCode: process.env.SORT_CODE || '00-00-00',
