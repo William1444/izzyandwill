@@ -9,7 +9,7 @@ const session = require('express-session');
 
 const indexRouter = require('./routes/index');
 const roomsRouter = require('./routes/room');
-const rsvpRouter = require('./routes/rsvp');
+const rsvpAdminRouter = require('./routes/rsvp-admin');
 const userRouter = require('./routes/user');
 const inviteeRouter = require('./routes/invitee');
 const locals = require('./middleware/locals');
@@ -58,7 +58,7 @@ app.use(function(req, res, next) {
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/room', roomsRouter);
-// app.use('/rsvp', rsvpRouter);
+app.use('/rsvp/admin', rsvpAdminRouter);
 app.use('/invitee', inviteeRouter);
 
 // catch 404 and forward to error handler

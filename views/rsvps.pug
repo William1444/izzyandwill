@@ -13,6 +13,7 @@ html
         th Room
         th Room paid
         th Room price
+        th Food
         th Message
         th Time
       each invitee in invitees
@@ -24,6 +25,7 @@ html
           td #{invitee.room}
           td #{invitee.roomPaid}
           td #{invitee.roomPrice}
+          td #{invitee.foodChoice}
           td #{invitee.message}
           td #{invitee.time}
     p
